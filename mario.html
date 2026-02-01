@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Mario Game ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        #gameContainer {
+            position: relative;
+            border: 4px solid #333;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            background: #87CEEB;
+        }
+
+        #gameCanvas {
+            display: block;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D8C8 100%);
+        }
+
+        .ui-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 3px solid #333;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .ui-panel div {
+            margin: 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .game-over-screen, .level-complete-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 2000;
+            color: white;
+        }
+
+        .game-over-screen.show, .level-complete-screen.show {
+            display: flex;
+        }
+
+        .screen-content {
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .screen-content h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #FFD700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .screen-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .screen-content p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .screen-content button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: #4CAF50;
+            color: white;
+            border: 3px solid #333;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .screen-content button:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            z-index: 100;
+            text-align: center;
+        }
+
+        /* Mini Game Modal */
+        .mini-game-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+        }
+
+        .mini-game-modal.show {
+            display: flex;
+        }
+
+        .mini-game-content {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: white;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .mini-game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .mini-game-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+
+        .game-btn {
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .game-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .guess-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .guess-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .trivia-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .trivia-option {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .trivia-option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(10px);
+        }
+
+        .trivia-option.correct {
+            background: rgba(76, 175, 80, 0.5);
+            border-color: #4caf50;
+        }
+
+        .trivia-option.incorrect {
+            background: rgba(244, 67, 54, 0.5);
+            border-color: #f44336;
+        }
+
+        .checkpoint-progress {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 25px;
+            border-radius: 15px;
+            border: 3px solid #333;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-button">← Back</a>
+    
+    <div class="ui-panel">
+        <div>Score: <span id="score">0</span></div>
+        <div>Lives: <span id="lives">3</span></div>
+        <div>Coins: <span id="coins">0</span></div>
+    </div>
+
+    <div class="checkpoint-progress">
+        Checkpoints: <span id="checkpointsCompleted">0</span> / 5
+    </div>
+
+    <div id="gameContainer">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <div class="instructions">
+        Use Arrow Keys or WASD to move • Space or Up Arrow to jump • Collect coins and avoid enemies!
+    </div>
+
+    <div class="game-over-screen" id="gameOverScreen">
+        <div class="screen-content">
+            <h1>Game Over!</h1>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <p>Coins Collected: <span id="finalCoins">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <div class="level-complete-screen" id="levelCompleteScreen">
+        <div class="screen-content">
+            <h2>Level Complete! 🎉</h2>
+            <p>Final Score: <span id="levelScore">0</span></p>
+            <p>Coins Collected: <span id="levelCoins">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Mini Game Modal -->
+    <div class="mini-game-modal" id="miniGameModal">
+        <div class="mini-game-content">
+            <div id="miniGameContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Set canvas size
+        canvas.width = 1200;
+        canvas.height = 600;
+
+        // Game state
+        let gameState = 'playing'; // 'playing', 'paused', 'gameOver', 'levelComplete', 'miniGame'
+        let score = 0;
+        let lives = 3;
+        let coins = 0;
+        let cameraX = 0;
+        let checkpointsCompleted = 0;
+        let checkpointTriggered = {};
+        let currentCheckpoint = null;
+
+        // Ground level (must be defined before player)
+        const groundY = canvas.height - 100;
+
+        // Player (Mario) - much slower movement
+        const player = {
+            x: 100,
+            y: groundY - 32,
+            width: 32,
+            height: 32,
+            velocityX: 0,
+            velocityY: 0,
+            speed: 2.0, // Much slower
+            jumpPower: -10, // Lower jump
+            gravity: 0.5, // Slower gravity
+            onGround: false,
+            facingRight: true,
+            invulnerable: false,
+            invulnerableTime: 0,
+            animFrame: 0
+        };
+
+        // Platforms
+        const platforms = [];
+
+        // Enemies
+        const enemies = [];
+
+        // Coins
+        const coinItems = [];
+
+        // Question blocks (power-ups)
+        const questionBlocks = [];
+
+        // Checkpoints
+        const checkpoints = [];
+
+        // Particles for effects
+        const particles = [];
+
+        // Input handling
+        const keys = {};
+
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            keys[e.code] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+            keys[e.code] = false;
+        });
+
+        // Create single level - slightly challenging
+        function createLevel() {
+            platforms.length = 0;
+            enemies.length = 0;
+            coinItems.length = 0;
+            questionBlocks.length = 0;
+
+            // Ground platform
+            platforms.push({
+                x: 0,
+                y: groundY,
+                width: canvas.width * 3.5,
+                height: 100,
+                type: 'ground'
+            });
+
+            // Challenging platform layout
+            platforms.push({ x: 400, y: groundY - 140, width: 180, height: 20, type: 'brick' });
+            platforms.push({ x: 650, y: groundY - 200, width: 150, height: 20, type: 'brick' });
+            platforms.push({ x: 900, y: groundY - 160, width: 150, height: 20, type: 'brick' });
+            platforms.push({ x: 1150, y: groundY - 220, width: 150, height: 20, type: 'brick' });
+            platforms.push({ x: 1400, y: groundY - 180, width: 150, height: 20, type: 'brick' });
+            platforms.push({ x: 1650, y: groundY - 240, width: 150, height: 20, type: 'brick' });
+            platforms.push({ x: 1900, y: groundY - 200, width: 200, height: 20, type: 'brick' });
+            platforms.push({ x: 2200, y: groundY - 160, width: 200, height: 20, type: 'brick' });
+            platforms.push({ x: 2500, y: groundY - 120, width: 250, height: 20, type: 'brick' });
+            platforms.push({ x: 2800, y: groundY - 180, width: 200, height: 20, type: 'brick' });
+
+            // Coins - strategically placed
+            coinItems.push({ x: 450, y: groundY - 190, collected: false });
+            coinItems.push({ x: 700, y: groundY - 250, collected: false });
+            coinItems.push({ x: 950, y: groundY - 210, collected: false });
+            coinItems.push({ x: 1200, y: groundY - 270, collected: false });
+            coinItems.push({ x: 1450, y: groundY - 230, collected: false });
+            coinItems.push({ x: 1700, y: groundY - 290, collected: false });
+            coinItems.push({ x: 1950, y: groundY - 250, collected: false });
+            coinItems.push({ x: 2250, y: groundY - 210, collected: false });
+            coinItems.push({ x: 2550, y: groundY - 170, collected: false });
+            coinItems.push({ x: 2850, y: groundY - 230, collected: false });
+
+            // Question blocks
+            questionBlocks.push({ x: 425, y: groundY - 190, hit: false });
+            questionBlocks.push({ x: 1175, y: groundY - 270, hit: false });
+            questionBlocks.push({ x: 1925, y: groundY - 250, hit: false });
+            questionBlocks.push({ x: 2575, y: groundY - 170, hit: false });
+
+            // Enemies - much slower
+            enemies.push({ x: 550, y: groundY - 32, width: 16, height: 16, speed: 1.0, direction: 1 });
+            enemies.push({ x: 800, y: groundY - 32, width: 16, height: 16, speed: 0.9, direction: -1 });
+            enemies.push({ x: 1100, y: groundY - 32, width: 16, height: 16, speed: 1.1, direction: 1 });
+            enemies.push({ x: 1500, y: groundY - 32, width: 16, height: 16, speed: 1.0, direction: 1 });
+            enemies.push({ x: 2000, y: groundY - 32, width: 16, height: 16, speed: 1.1, direction: -1 });
+            enemies.push({ x: 2400, y: groundY - 32, width: 16, height: 16, speed: 1.2, direction: 1 });
+            enemies.push({ x: 2700, y: groundY - 32, width: 16, height: 16, speed: 1.0, direction: 1 });
+
+            // Checkpoints - 5 checkpoints spaced throughout the level
+            checkpoints.push({ x: 600, y: groundY - 250, width: 60, height: 60, number: 1, completed: false });
+            checkpoints.push({ x: 1200, y: groundY - 280, width: 60, height: 60, number: 2, completed: false });
+            checkpoints.push({ x: 1800, y: groundY - 300, width: 60, height: 60, number: 3, completed: false });
+            checkpoints.push({ x: 2400, y: groundY - 220, width: 60, height: 60, number: 4, completed: false });
+            checkpoints.push({ x: 3000, y: groundY - 250, width: 60, height: 60, number: 5, completed: false });
+
+            // Goal flag (end of level) - only accessible after all checkpoints
+            platforms.push({
+                x: canvas.width * 3.2,
+                y: groundY - 350,
+                width: 30,
+                height: 350,
+                type: 'flag'
+            });
+        }
+
+        // Update player
+        function updatePlayer() {
+            if (gameState !== 'playing') return;
+
+            // Horizontal movement
+            player.velocityX = 0;
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+                player.velocityX = player.speed;
+                player.facingRight = true;
+            }
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+                player.velocityX = -player.speed;
+                player.facingRight = false;
+            }
+
+            // Jump
+            if ((keys[' '] || keys['ArrowUp'] || keys['w'] || keys['W']) && player.onGround) {
+                player.velocityY = player.jumpPower;
+                player.onGround = false;
+            }
+
+            // Apply gravity
+            if (!player.onGround) {
+                player.velocityY += player.gravity;
+            }
+
+            // Update position
+            player.x += player.velocityX;
+            player.y += player.velocityY;
+
+            // Check platform collisions
+            player.onGround = false;
+            for (let platform of platforms) {
+                if (platform.type === 'flag') {
+                    // Only allow flag access if all checkpoints completed
+                    if (checkpointsCompleted === 5 && 
+                        player.x + player.width > platform.x &&
+                        player.x < platform.x + platform.width) {
+                        completeLevel();
+                    }
+                    continue;
+                }
+
+                const isColliding = player.x + player.width > platform.x &&
+                    player.x < platform.x + platform.width &&
+                    player.y + player.height > platform.y &&
+                    player.y + player.height < platform.y + platform.height + 10 &&
+                    player.velocityY >= 0;
+
+                if (isColliding) {
+                    player.y = platform.y - player.height;
+                    player.velocityY = 0;
+                    player.onGround = true;
+                }
+            }
+
+            // Check checkpoint collisions
+            for (let checkpoint of checkpoints) {
+                if (checkpoint.completed) continue;
+
+                const isColliding = player.x + player.width > checkpoint.x &&
+                    player.x < checkpoint.x + checkpoint.width &&
+                    player.y + player.height > checkpoint.y &&
+                    player.y < checkpoint.y + checkpoint.height;
+
+                if (isColliding && !checkpointTriggered[checkpoint.number]) {
+                    checkpointTriggered[checkpoint.number] = true;
+                    currentCheckpoint = checkpoint.number;
+                    gameState = 'miniGame';
+                    startMiniGame(checkpoint.number);
+                }
+            }
+
+            // Check coin collisions
+            for (let i = coinItems.length - 1; i >= 0; i--) {
+                const coin = coinItems[i];
+                if (!coin.collected &&
+                    player.x + player.width > coin.x &&
+                    player.x < coin.x + 30 &&
+                    player.y + player.height > coin.y &&
+                    player.y < coin.y + 30) {
+                    coin.collected = true;
+                    coins++;
+                    score += 100;
+                    createParticles(coin.x + 15, coin.y + 15, '#FFD700');
+                    updateUI();
+                }
+            }
+
+            // Check question block collisions
+            for (let block of questionBlocks) {
+                if (!block.hit &&
+                    player.x + player.width > block.x &&
+                    player.x < block.x + 32 &&
+                    player.y < block.y + 32 &&
+                    player.y + player.height > block.y &&
+                    player.velocityY < 0) {
+                    block.hit = true;
+                    score += 200;
+                    coins += 5;
+                    createParticles(block.x + 16, block.y + 16, '#FFD700');
+                    updateUI();
+                }
+            }
+
+            // Check enemy collisions
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const enemy = enemies[i];
+                if (player.x + player.width > enemy.x &&
+                    player.x < enemy.x + enemy.width &&
+                    player.y + player.height > enemy.y &&
+                    player.y < enemy.y + enemy.height) {
+                    
+                    // Stomp enemy
+                    if (player.velocityY > 0 && player.y + player.height < enemy.y + enemy.height * 0.7) {
+                        enemies.splice(i, 1);
+                        player.velocityY = -8;
+                        score += 200;
+                        createParticles(enemy.x + enemy.width/2, enemy.y + enemy.height/2, '#8B4513');
+                        updateUI();
+                    } else if (!player.invulnerable) {
+                        // Hit by enemy
+                        player.invulnerable = true;
+                        player.invulnerableTime = 120;
+                        lives--;
+                        updateUI();
+                        if (lives <= 0) {
+                            gameOver();
+                        }
+                    }
+                }
+            }
+
+            // Update invulnerability
+            if (player.invulnerable) {
+                player.invulnerableTime--;
+                if (player.invulnerableTime <= 0) {
+                    player.invulnerable = false;
+                }
+            }
+
+            // Keep player in bounds
+            if (player.y > canvas.height) {
+                if (!player.invulnerable) {
+                    lives--;
+                    updateUI();
+                    if (lives <= 0) {
+                        gameOver();
+                    } else {
+                        resetPlayer();
+                    }
+                }
+            }
+
+            // Update camera
+            if (player.x > canvas.width / 2) {
+                cameraX = player.x - canvas.width / 2;
+            }
+
+            // Update animation frame
+            if (player.velocityX !== 0) {
+                player.animFrame += 0.15;
+            }
+        }
+
+        // Reset player position
+        function resetPlayer() {
+            player.x = 100;
+            player.y = groundY - player.height;
+            player.velocityX = 0;
+            player.velocityY = 0;
+            player.invulnerable = true;
+            player.invulnerableTime = 60;
+            cameraX = 0;
+        }
+
+        // Update enemies
+        function updateEnemies() {
+            for (let enemy of enemies) {
+                enemy.x += enemy.speed * enemy.direction;
+
+                // Check platform edges
+                let onPlatform = false;
+                for (let platform of platforms) {
+                    if (platform.type === 'flag') continue;
+                    if (enemy.x + enemy.width > platform.x &&
+                        enemy.x < platform.x + platform.width &&
+                        enemy.y + enemy.height > platform.y &&
+                        enemy.y + enemy.height < platform.y + platform.height + 5) {
+                        onPlatform = true;
+                        if (enemy.x <= platform.x || enemy.x + enemy.width >= platform.x + platform.width) {
+                            enemy.direction *= -1;
+                        }
+                    }
+                }
+
+                if (!onPlatform && enemy.y + enemy.height >= groundY - 20) {
+                    if (Math.random() < 0.01) {
+                        enemy.direction *= -1;
+                    }
+                }
+            }
+        }
+
+        // Update particles
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15;
+                p.rotation += p.rotationSpeed || 0;
+                p.life--;
+                p.alpha = p.life / p.maxLife;
+                p.vx *= 0.98; // Friction
+
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        // Create particles with enhanced effects
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 15; i++) {
+                particles.push({
+                    x,
+                    y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6 - 2,
+                    life: 40,
+                    maxLife: 40,
+                    color,
+                    size: 2 + Math.random() * 4,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (Math.random() - 0.5) * 0.2
+                });
+            }
+        }
+
+        // Draw functions
+        function drawBackground() {
+            // Sky gradient with multiple layers
+            const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height * 0.6);
+            skyGradient.addColorStop(0, '#5DADE2');
+            skyGradient.addColorStop(0.5, '#87CEEB');
+            skyGradient.addColorStop(1, '#AED6F1');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height * 0.6);
+
+            // Distant hills (parallax)
+            ctx.fillStyle = '#85C1E2';
+            for (let i = 0; i < 8; i++) {
+                const x = (i * 400 - cameraX * 0.1) % (canvas.width + 400) - 200;
+                const hillY = canvas.height * 0.5;
+                ctx.beginPath();
+                ctx.moveTo(x, hillY);
+                ctx.quadraticCurveTo(x + 100, hillY - 40, x + 200, hillY);
+                ctx.fill();
+            }
+
+            // Mid hills
+            ctx.fillStyle = '#7FB3D3';
+            for (let i = 0; i < 6; i++) {
+                const x = (i * 500 - cameraX * 0.15) % (canvas.width + 500) - 250;
+                const hillY = canvas.height * 0.55;
+                ctx.beginPath();
+                ctx.moveTo(x, hillY);
+                ctx.quadraticCurveTo(x + 120, hillY - 50, x + 240, hillY);
+                ctx.fill();
+            }
+
+            // Ground with texture
+            ctx.fillStyle = '#8B7355';
+            ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+            
+            // Ground shading
+            const groundGradient = ctx.createLinearGradient(0, groundY, 0, groundY + 100);
+            groundGradient.addColorStop(0, '#9B8565');
+            groundGradient.addColorStop(1, '#6B5535');
+            ctx.fillStyle = groundGradient;
+            ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+
+            // Grass with texture
+            ctx.fillStyle = '#7CB342';
+            for (let x = 0; x < canvas.width; x += 20) {
+                const grassX = x - (cameraX % 20);
+                ctx.fillRect(grassX, groundY, 20, 6);
+                // Grass blades
+                ctx.strokeStyle = '#6BA03A';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 3; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(grassX + i * 7, groundY + 6);
+                    ctx.lineTo(grassX + i * 7 + 2, groundY);
+                    ctx.stroke();
+                }
+            }
+
+            // Enhanced clouds with shadows
+            for (let i = 0; i < 6; i++) {
+                const x = (i * 350 - cameraX * 0.2) % (canvas.width + 300) - 150;
+                const y = 40 + (i % 3) * 70;
+                drawCloud(x, y);
+            }
+        }
+
+        function drawCloud(x, y) {
+            // Cloud shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.beginPath();
+            ctx.arc(x + 2, y + 2, 22, 0, Math.PI * 2);
+            ctx.arc(x + 27, y + 2, 27, 0, Math.PI * 2);
+            ctx.arc(x + 52, y + 2, 22, 0, Math.PI * 2);
+            ctx.arc(x + 17, y - 8, 17, 0, Math.PI * 2);
+            ctx.arc(x + 37, y - 8, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Main cloud
+            ctx.fillStyle = '#FFFFFF';
+            ctx.beginPath();
+            ctx.arc(x, y, 22, 0, Math.PI * 2);
+            ctx.arc(x + 25, y, 27, 0, Math.PI * 2);
+            ctx.arc(x + 50, y, 22, 0, Math.PI * 2);
+            ctx.arc(x + 15, y - 10, 17, 0, Math.PI * 2);
+            ctx.arc(x + 35, y - 10, 20, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cloud highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(x + 5, y - 5, 15, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawPlayer() {
+            ctx.save();
+            ctx.translate(player.x - cameraX, player.y);
+
+            // Flash effect when invulnerable
+            if (player.invulnerable && Math.floor(player.invulnerableTime / 5) % 2 === 0) {
+                ctx.globalAlpha = 0.4;
+            }
+
+            if (!player.facingRight) {
+                ctx.scale(-1, 1);
+                ctx.translate(-player.width, 0);
+            }
+
+            // Pixel-art Mario sprite (16x16 pixel style, scaled 2x)
+            const scale = 2;
+            const px = 0;
+            const py = 0;
+
+            // Classic Mario colors
+            const hatRed = '#E52521';
+            const hatRedDark = '#C41E3A';
+            const overallBlue = '#0066CC';
+            const overallBlueDark = '#004499';
+            const skin = '#FFDBAC';
+            const skinDark = '#FFCC99';
+            const brown = '#8B4513';
+            const black = '#000000';
+            const white = '#FFFFFF';
+
+            // Shadow
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(px + 4, py + 30, 24, 4);
+
+            // Hat (red) - pixel perfect
+            ctx.fillStyle = hatRed;
+            ctx.fillRect(px + 0, py + 0, 16 * scale, 4 * scale); // Top of hat
+            ctx.fillRect(px + 2 * scale, py + 4 * scale, 12 * scale, 2 * scale); // Hat rim
+            
+            // Hat highlight
+            ctx.fillStyle = '#FF6666';
+            ctx.fillRect(px + 0, py + 0, 16 * scale, 2 * scale);
+
+            // Face (skin)
+            ctx.fillStyle = skin;
+            ctx.fillRect(px + 2 * scale, py + 6 * scale, 12 * scale, 8 * scale);
+            
+            // Face outline
+            ctx.strokeStyle = black;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px + 2 * scale, py + 6 * scale, 12 * scale, 8 * scale);
+
+            // Eyes
+            ctx.fillStyle = black;
+            ctx.fillRect(px + 4 * scale, py + 8 * scale, 2 * scale, 2 * scale);
+            ctx.fillRect(px + 10 * scale, py + 8 * scale, 2 * scale, 2 * scale);
+            
+            // Eye whites
+            ctx.fillStyle = white;
+            ctx.fillRect(px + 5 * scale, py + 9 * scale, 1 * scale, 1 * scale);
+            ctx.fillRect(px + 11 * scale, py + 9 * scale, 1 * scale, 1 * scale);
+
+            // Mustache
+            ctx.fillStyle = brown;
+            ctx.fillRect(px + 4 * scale, py + 12 * scale, 8 * scale, 2 * scale);
+
+            // Body/Shirt (red)
+            ctx.fillStyle = hatRed;
+            ctx.fillRect(px + 2 * scale, py + 14 * scale, 12 * scale, 4 * scale);
+            
+            // Body outline
+            ctx.strokeStyle = black;
+            ctx.strokeRect(px + 2 * scale, py + 14 * scale, 12 * scale, 4 * scale);
+
+            // Overalls (blue)
+            ctx.fillStyle = overallBlue;
+            ctx.fillRect(px + 4 * scale, py + 18 * scale, 8 * scale, 10 * scale);
+            
+            // Overall straps
+            ctx.fillStyle = overallBlueDark;
+            ctx.fillRect(px + 4 * scale, py + 18 * scale, 2 * scale, 6 * scale);
+            ctx.fillRect(px + 10 * scale, py + 18 * scale, 2 * scale, 6 * scale);
+            ctx.fillRect(px + 6 * scale, py + 18 * scale, 4 * scale, 2 * scale);
+            
+            // Overall buttons
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(px + 7 * scale, py + 20 * scale, 1 * scale, 1 * scale);
+            ctx.fillRect(px + 8 * scale, py + 22 * scale, 1 * scale, 1 * scale);
+
+            // Arms (skin)
+            ctx.fillStyle = skin;
+            ctx.fillRect(px + 0, py + 16 * scale, 2 * scale, 6 * scale);
+            ctx.fillRect(px + 14 * scale, py + 16 * scale, 2 * scale, 6 * scale);
+            
+            // Arms outline
+            ctx.strokeStyle = black;
+            ctx.strokeRect(px + 0, py + 16 * scale, 2 * scale, 6 * scale);
+            ctx.strokeRect(px + 14 * scale, py + 16 * scale, 2 * scale, 6 * scale);
+
+            // Legs (blue)
+            ctx.fillStyle = overallBlue;
+            ctx.fillRect(px + 4 * scale, py + 28 * scale, 3 * scale, 4 * scale);
+            ctx.fillRect(px + 9 * scale, py + 28 * scale, 3 * scale, 4 * scale);
+            
+            // Legs outline
+            ctx.strokeStyle = black;
+            ctx.strokeRect(px + 4 * scale, py + 28 * scale, 3 * scale, 4 * scale);
+            ctx.strokeRect(px + 9 * scale, py + 28 * scale, 3 * scale, 4 * scale);
+
+            // Shoes (brown)
+            ctx.fillStyle = brown;
+            ctx.fillRect(px + 2 * scale, py + 30 * scale, 4 * scale, 2 * scale);
+            ctx.fillRect(px + 10 * scale, py + 30 * scale, 4 * scale, 2 * scale);
+
+            ctx.restore();
+        }
+
+        function drawCheckpoints() {
+            for (let checkpoint of checkpoints) {
+                const x = checkpoint.x - cameraX;
+                const y = checkpoint.y;
+
+                if (x + checkpoint.width < 0 || x > canvas.width) continue;
+
+                // Checkpoint block with glow
+                if (checkpoint.completed) {
+                    // Completed checkpoint - green
+                    const gradient = ctx.createLinearGradient(x, y, x, y + checkpoint.height);
+                    gradient.addColorStop(0, '#66BB6A');
+                    gradient.addColorStop(1, '#2E7D32');
+                    ctx.fillStyle = gradient;
+                } else {
+                    // Active checkpoint - pulsing yellow/orange
+                    const time = Date.now() * 0.005;
+                    const pulse = Math.sin(time) * 0.2 + 0.8;
+                    const gradient = ctx.createLinearGradient(x, y, x, y + checkpoint.height);
+                    gradient.addColorStop(0, `rgba(255, 235, 59, ${pulse})`);
+                    gradient.addColorStop(1, `rgba(255, 152, 0, ${pulse})`);
+                    ctx.fillStyle = gradient;
+                    
+                    // Glow effect
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = `rgba(255, 215, 0, ${pulse * 0.5})`;
+                }
+                
+                ctx.fillRect(x, y, checkpoint.width, checkpoint.height);
+                ctx.shadowBlur = 0;
+                
+                // Border
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(x, y, checkpoint.width, checkpoint.height);
+                
+                // Checkpoint number
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(checkpoint.number, x + checkpoint.width/2, y + checkpoint.height/2);
+                
+                // Checkmark if completed
+                if (checkpoint.completed) {
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(x + checkpoint.width * 0.25, y + checkpoint.height * 0.5);
+                    ctx.lineTo(x + checkpoint.width * 0.4, y + checkpoint.height * 0.65);
+                    ctx.lineTo(x + checkpoint.width * 0.75, y + checkpoint.height * 0.35);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function drawPlatforms() {
+            for (let platform of platforms) {
+                const x = platform.x - cameraX;
+                const y = platform.y;
+
+                if (platform.type === 'ground') {
+                    // Enhanced ground platform with texture
+                    const groundGradient = ctx.createLinearGradient(x, y, x, y + platform.height);
+                    groundGradient.addColorStop(0, '#9B8565');
+                    groundGradient.addColorStop(1, '#6B5535');
+                    ctx.fillStyle = groundGradient;
+                    ctx.fillRect(x, y, platform.width, platform.height);
+                    
+                    // Ground texture lines
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+                    ctx.lineWidth = 1;
+                    for (let i = 0; i < platform.width; i += 30) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + i, y);
+                        ctx.lineTo(x + i, y + platform.height);
+                        ctx.stroke();
+                    }
+                    
+                    // Grass on top
+                    ctx.fillStyle = '#7CB342';
+                    ctx.fillRect(x, y, platform.width, 6);
+                } else if (platform.type === 'brick') {
+                    // Classic Mario brick block (pixel art style)
+                    const brickRed = '#C83C23';
+                    const brickRedDark = '#8B1A1A';
+                    const brickRedLight = '#E63946';
+                    const black = '#000000';
+                    
+                    // Main brick color
+                    ctx.fillStyle = brickRed;
+                    ctx.fillRect(x, y, platform.width, platform.height);
+                    
+                    // Brick pattern - horizontal lines
+                    ctx.strokeStyle = brickRedDark;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + platform.height / 2);
+                    ctx.lineTo(x + platform.width, y + platform.height / 2);
+                    ctx.stroke();
+                    
+                    // Brick pattern - vertical lines (every 16px for pixel look)
+                    for (let i = 0; i < platform.width; i += 16) {
+                        ctx.beginPath();
+                        ctx.moveTo(x + i, y);
+                        ctx.lineTo(x + i, y + platform.height);
+                        ctx.stroke();
+                    }
+                    
+                    // Top highlight (lighter red)
+                    ctx.fillStyle = brickRedLight;
+                    ctx.fillRect(x, y, platform.width, 2);
+                    
+                    // Bottom shadow (darker red)
+                    ctx.fillStyle = brickRedDark;
+                    ctx.fillRect(x, y + platform.height - 2, platform.width, 2);
+                    
+                    // Border
+                    ctx.strokeStyle = black;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, platform.width, platform.height);
+                } else if (platform.type === 'flag') {
+                    // Enhanced flag pole
+                    const poleGradient = ctx.createLinearGradient(x, y, x + 5, y);
+                    poleGradient.addColorStop(0, '#888');
+                    poleGradient.addColorStop(1, '#555');
+                    ctx.fillStyle = poleGradient;
+                    ctx.fillRect(x, y, 5, platform.height);
+                    
+                    // Pole shadow
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                    ctx.fillRect(x + 1, y, 2, platform.height);
+                    
+                    // Flag with animation
+                    const flagWave = Math.sin(Date.now() * 0.005 + x * 0.01) * 3;
+                    ctx.fillStyle = '#4CAF50';
+                    ctx.beginPath();
+                    ctx.moveTo(x + 5, y);
+                    ctx.lineTo(x + 5, y + 15);
+                    ctx.lineTo(x + 30 + flagWave, y + 10);
+                    ctx.lineTo(x + 5, y + 5);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Flag pattern
+                    ctx.strokeStyle = '#2E7D32';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x + 5, y + 5);
+                    ctx.lineTo(x + 30 + flagWave, y);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x + 5, y + 10);
+                    ctx.lineTo(x + 30 + flagWave, y + 5);
+                    ctx.stroke();
+                    
+                    // Flag pole top
+                    ctx.fillStyle = '#FFD700';
+                    ctx.beginPath();
+                    ctx.arc(x + 2.5, y, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        }
+
+        function drawEnemies() {
+            for (let enemy of enemies) {
+                const x = enemy.x - cameraX;
+                const y = enemy.y;
+
+                // Classic Goomba pixel art (16x16 style, scaled)
+                const scale = 1;
+                const px = x;
+                const py = y;
+
+                // Goomba colors
+                const brown = '#8B4513';
+                const brownDark = '#654321';
+                const brownLight = '#A0522D';
+                const white = '#FFFFFF';
+                const black = '#000000';
+
+                // Shadow
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.fillRect(px + 2, py + 14, 12, 2);
+
+                // Body (brown ellipse)
+                ctx.fillStyle = brown;
+                ctx.beginPath();
+                ctx.ellipse(px + 8, py + 12, 7, 4, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Body outline
+                ctx.strokeStyle = black;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Head (brown circle)
+                ctx.fillStyle = brown;
+                ctx.beginPath();
+                ctx.arc(px + 8, py + 6, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Head outline
+                ctx.strokeStyle = black;
+                ctx.stroke();
+
+                // Head highlight
+                ctx.fillStyle = brownLight;
+                ctx.beginPath();
+                ctx.arc(px + 6, py + 5, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Eyes (white)
+                ctx.fillStyle = white;
+                ctx.fillRect(px + 4, py + 4, 3, 3);
+                ctx.fillRect(px + 9, py + 4, 3, 3);
+                
+                // Eye outlines
+                ctx.strokeStyle = black;
+                ctx.strokeRect(px + 4, py + 4, 3, 3);
+                ctx.strokeRect(px + 9, py + 4, 3, 3);
+
+                // Pupils (black)
+                ctx.fillStyle = black;
+                ctx.fillRect(px + 5, py + 5, 1, 1);
+                ctx.fillRect(px + 10, py + 5, 1, 1);
+
+                // Eyebrows
+                ctx.fillStyle = brownDark;
+                ctx.fillRect(px + 3, py + 3, 5, 1);
+                ctx.fillRect(px + 8, py + 3, 5, 1);
+
+                // Feet (brown)
+                ctx.fillStyle = brownDark;
+                ctx.beginPath();
+                ctx.arc(px + 3, py + 14, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(px + 13, py + 14, 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Feet outlines
+                ctx.strokeStyle = black;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(px + 3, py + 14, 2, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(px + 13, py + 14, 2, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+        }
+
+        function drawCoins() {
+            for (let coin of coinItems) {
+                if (coin.collected) continue;
+                const x = coin.x - cameraX;
+                const y = coin.y;
+
+                // Classic Mario coin (spinning animation)
+                const time = Date.now() * 0.01;
+                const scale = Math.abs(Math.sin(time));
+                
+                ctx.save();
+                ctx.translate(x + 8, y + 8);
+                
+                // Coin (ellipse that flattens when spinning)
+                ctx.scale(scale, 1);
+                
+                // Outer coin (gold)
+                const coinGradient = ctx.createLinearGradient(-8, -8, 8, 8);
+                coinGradient.addColorStop(0, '#FFD700');
+                coinGradient.addColorStop(1, '#FFA500');
+                ctx.fillStyle = coinGradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Inner coin (darker)
+                ctx.fillStyle = '#FFA500';
+                ctx.beginPath();
+                ctx.arc(0, 0, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Coin highlight
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(-2, -2, 3, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Border
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(0, 0, 8, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.restore();
+            }
+        }
+
+        function drawQuestionBlocks() {
+            for (let block of questionBlocks) {
+                const x = block.x - cameraX;
+                const y = block.y;
+
+                if (block.hit) {
+                    // Used block (brown) - classic Mario style
+                    const brown = '#8B4513';
+                    const brownDark = '#654321';
+                    const black = '#000000';
+                    
+                    ctx.fillStyle = brown;
+                    ctx.fillRect(x, y, 32, 32);
+                    
+                    // Texture lines
+                    ctx.strokeStyle = brownDark;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x + 16, y);
+                    ctx.lineTo(x + 16, y + 32);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + 16);
+                    ctx.lineTo(x + 32, y + 16);
+                    ctx.stroke();
+                    
+                    // Border
+                    ctx.strokeStyle = black;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, 32, 32);
+                } else {
+                    // Question block (yellow) - classic Mario style
+                    const time = Date.now() * 0.003;
+                    const pulse = Math.sin(time) * 0.1 + 0.9;
+                    
+                    const yellow = `rgba(255, 215, 0, ${pulse})`;
+                    const yellowLight = `rgba(255, 235, 59, ${pulse})`;
+                    const yellowDark = `rgba(255, 193, 7, ${pulse})`;
+                    const black = '#000000';
+                    const white = '#FFFFFF';
+                    
+                    // Main block
+                    ctx.fillStyle = yellow;
+                    ctx.fillRect(x, y, 32, 32);
+                    
+                    // Top highlight
+                    ctx.fillStyle = yellowLight;
+                    ctx.fillRect(x, y, 32, 4);
+                    
+                    // Bottom shadow
+                    ctx.fillStyle = yellowDark;
+                    ctx.fillRect(x, y + 28, 32, 4);
+                    
+                    // Border
+                    ctx.strokeStyle = black;
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, 32, 32);
+                    
+                    // Question mark (pixel style)
+                    ctx.fillStyle = black;
+                    ctx.font = 'bold 20px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('?', x + 16, y + 16);
+                }
+            }
+        }
+
+        function drawParticles() {
+            for (let p of particles) {
+                ctx.save();
+                ctx.translate(p.x - cameraX, p.y);
+                ctx.rotate(p.rotation || 0);
+                ctx.globalAlpha = p.alpha;
+                
+                // Glow effect
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = p.color;
+                
+                // Particle with gradient
+                const particleGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size);
+                particleGradient.addColorStop(0, p.color);
+                particleGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = particleGradient;
+                ctx.beginPath();
+                ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Bright center
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.beginPath();
+                ctx.arc(0, 0, p.size * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            }
+        }
+
+        // UI updates
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('lives').textContent = lives;
+            document.getElementById('coins').textContent = coins;
+            document.getElementById('checkpointsCompleted').textContent = checkpointsCompleted;
+        }
+
+        // Game over
+        function gameOver() {
+            gameState = 'gameOver';
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalCoins').textContent = coins;
+            document.getElementById('gameOverScreen').classList.add('show');
+        }
+
+        // Level complete
+        function completeLevel() {
+            gameState = 'levelComplete';
+            document.getElementById('levelScore').textContent = score;
+            document.getElementById('levelCoins').textContent = coins;
+            document.getElementById('levelCompleteScreen').classList.add('show');
+        }
+
+        // Restart game
+        function restartGame() {
+            score = 0;
+            lives = 3;
+            coins = 0;
+            cameraX = 0;
+            checkpointsCompleted = 0;
+            checkpointTriggered = {};
+            currentCheckpoint = null;
+            gameState = 'playing';
+            document.getElementById('gameOverScreen').classList.remove('show');
+            document.getElementById('levelCompleteScreen').classList.remove('show');
+            document.getElementById('miniGameModal').classList.remove('show');
+            createLevel();
+            resetPlayer();
+            updateUI();
+        }
+
+        // Mini Game Functions
+        function startMiniGame(checkpointNum) {
+            document.getElementById('miniGameModal').classList.add('show');
+            
+            switch(checkpointNum) {
+                case 1:
+                    initMiniGame1();
+                    break;
+                case 2:
+                    initMiniGame2();
+                    break;
+                case 3:
+                    initMiniGame3();
+                    break;
+                case 4:
+                    initMiniGame4();
+                    break;
+                case 5:
+                    initMiniGame5();
+                    break;
+            }
+        }
+
+        function closeMiniGame() {
+            document.getElementById('miniGameModal').classList.remove('show');
+            gameState = 'playing';
+        }
+
+        function completeCheckpoint() {
+            const checkpoint = checkpoints.find(cp => cp.number === currentCheckpoint);
+            if (checkpoint && !checkpoint.completed) {
+                checkpoint.completed = true;
+                checkpointsCompleted++;
+                score += 500;
+                updateUI();
+                closeMiniGame();
+            }
+        }
+
+        // Mini Game 1: Math Challenge
+        function initMiniGame1() {
+            const num1 = Math.floor(Math.random() * 20) + 1;
+            const num2 = Math.floor(Math.random() * 20) + 1;
+            const answer = num1 + num2;
+            
+            const content = `
+                <div class="mini-game-header">
+                    <h2>Checkpoint 1: Math Challenge 🧮</h2>
+                    <p>Solve this math problem to continue!</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="font-size: 2rem; margin: 30px 0;">${num1} + ${num2} = ?</p>
+                    <input type="number" class="guess-input" id="mathAnswer" placeholder="Enter your answer...">
+                    <div>
+                        <button class="game-btn" onclick="checkMathAnswer(${answer})">Submit</button>
+                    </div>
+                    <div id="mathResult" style="margin-top: 15px; font-size: 1.1rem;"></div>
+                </div>
+            `;
+            document.getElementById('miniGameContent').innerHTML = content;
+            document.getElementById('mathAnswer').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkMathAnswer(answer);
+            });
+            document.getElementById('mathAnswer').focus();
+        }
+
+        function checkMathAnswer(correctAnswer) {
+            const userAnswer = parseInt(document.getElementById('mathAnswer').value);
+            const resultDiv = document.getElementById('mathResult');
+            
+            if (userAnswer === correctAnswer) {
+                resultDiv.textContent = '🎉 Correct! Well done!';
+                resultDiv.style.color = '#4caf50';
+                setTimeout(() => {
+                    completeCheckpoint();
+                }, 1500);
+            } else {
+                resultDiv.textContent = `❌ Incorrect! The answer is ${correctAnswer}. Try again!`;
+                resultDiv.style.color = '#f44336';
+            }
+        }
+
+        // Mini Game 2: Memory Sequence
+        let sequence = [];
+        let playerSequence = [];
+        let sequenceIndex = 0;
+
+        function initMiniGame2() {
+            sequence = [];
+            playerSequence = [];
+            sequenceIndex = 0;
+            
+            // Generate sequence of 4 colors
+            const colors = ['🔴', '🟢', '🔵', '🟡'];
+            for (let i = 0; i < 4; i++) {
+                sequence.push(colors[Math.floor(Math.random() * colors.length)]);
+            }
+            
+            const content = `
+                <div class="mini-game-header">
+                    <h2>Checkpoint 2: Memory Sequence 🧠</h2>
+                    <p>Watch the sequence and repeat it!</p>
+                </div>
+                <div style="text-align: center;">
+                    <div id="sequenceDisplay" style="font-size: 3rem; margin: 30px 0; min-height: 80px;"></div>
+                    <div id="playerSequence" style="font-size: 2rem; margin: 20px 0; min-height: 60px;"></div>
+                    <div>
+                        <button class="game-btn" onclick="showSequence()">Show Sequence</button>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="game-btn" onclick="addToSequence('🔴')">🔴</button>
+                        <button class="game-btn" onclick="addToSequence('🟢')">🟢</button>
+                        <button class="game-btn" onclick="addToSequence('🔵')">🔵</button>
+                        <button class="game-btn" onclick="addToSequence('🟡')">🟡</button>
+                    </div>
+                    <div id="sequenceResult" style="margin-top: 15px; font-size: 1.1rem;"></div>
+                </div>
+            `;
+            document.getElementById('miniGameContent').innerHTML = content;
+            showSequence();
+        }
+
+        function showSequence() {
+            const display = document.getElementById('sequenceDisplay');
+            let index = 0;
+            display.textContent = '';
+            
+            const showNext = () => {
+                if (index < sequence.length) {
+                    display.textContent = sequence[index];
+                    index++;
+                    setTimeout(showNext, 800);
+                } else {
+                    display.textContent = 'Your turn!';
+                }
+            };
+            showNext();
+        }
+
+        function addToSequence(color) {
+            playerSequence.push(color);
+            document.getElementById('playerSequence').textContent = playerSequence.join(' ');
+            
+            if (playerSequence.length === sequence.length) {
+                checkSequence();
+            }
+        }
+
+        function checkSequence() {
+            const resultDiv = document.getElementById('sequenceResult');
+            let correct = true;
+            
+            for (let i = 0; i < sequence.length; i++) {
+                if (playerSequence[i] !== sequence[i]) {
+                    correct = false;
+                    break;
+                }
+            }
+            
+            if (correct) {
+                resultDiv.textContent = '🎉 Perfect! You got it!';
+                resultDiv.style.color = '#4caf50';
+                setTimeout(() => {
+                    completeCheckpoint();
+                }, 1500);
+            } else {
+                resultDiv.textContent = '❌ Wrong sequence! Try again!';
+                resultDiv.style.color = '#f44336';
+                setTimeout(() => {
+                    initMiniGame2();
+                }, 2000);
+            }
+        }
+
+        // Mini Game 3: Quick Click
+        let clickTarget = 0;
+        let clicksNeeded = 10;
+        let currentClicks = 0;
+
+        function initMiniGame3() {
+            currentClicks = 0;
+            clicksNeeded = 10;
+            
+            const content = `
+                <div class="mini-game-header">
+                    <h2>Checkpoint 3: Quick Click ⚡</h2>
+                    <p>Click the button ${clicksNeeded} times as fast as you can!</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="font-size: 2rem; margin: 30px 0;">Clicks: <span id="clickCount">0</span> / ${clicksNeeded}</p>
+                    <button class="game-btn" id="clickBtn" onclick="incrementClick()" style="font-size: 2rem; padding: 20px 40px;">CLICK ME!</button>
+                    <div id="clickResult" style="margin-top: 15px; font-size: 1.1rem;"></div>
+                </div>
+            `;
+            document.getElementById('miniGameContent').innerHTML = content;
+        }
+
+        function incrementClick() {
+            currentClicks++;
+            document.getElementById('clickCount').textContent = currentClicks;
+            
+            if (currentClicks >= clicksNeeded) {
+                document.getElementById('clickResult').textContent = '🎉 Great job!';
+                document.getElementById('clickResult').style.color = '#4caf50';
+                setTimeout(() => {
+                    completeCheckpoint();
+                }, 1000);
+            }
+        }
+
+        // Mini Game 4: Trivia
+        function initMiniGame4() {
+            const questions = [
+                {
+                    question: 'What is the capital of France?',
+                    options: ['London', 'Berlin', 'Paris', 'Madrid'],
+                    correct: 2
+                },
+                {
+                    question: 'How many continents are there?',
+                    options: ['5', '6', '7', '8'],
+                    correct: 2
+                },
+                {
+                    question: 'What is 2 + 2?',
+                    options: ['3', '4', '5', '6'],
+                    correct: 1
+                }
+            ];
+            
+            const q = questions[Math.floor(Math.random() * questions.length)];
+            
+            const content = `
+                <div class="mini-game-header">
+                    <h2>Checkpoint 4: Trivia Quiz ❓</h2>
+                    <p>Answer correctly to continue!</p>
+                </div>
+                <div>
+                    <p style="font-size: 1.3rem; margin: 20px 0;">${q.question}</p>
+                    <div class="trivia-options">
+                        ${q.options.map((opt, idx) => `
+                            <div class="trivia-option" onclick="selectTriviaAnswer(${idx}, ${q.correct})">${opt}</div>
+                        `).join('')}
+                    </div>
+                    <div id="triviaResult" style="margin-top: 15px; font-size: 1.1rem; text-align: center;"></div>
+                </div>
+            `;
+            document.getElementById('miniGameContent').innerHTML = content;
+        }
+
+        function selectTriviaAnswer(selected, correct) {
+            const options = document.querySelectorAll('.trivia-option');
+            const resultDiv = document.getElementById('triviaResult');
+            
+            options.forEach((opt, idx) => {
+                opt.style.pointerEvents = 'none';
+                if (idx === correct) {
+                    opt.classList.add('correct');
+                } else if (idx === selected && idx !== correct) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            if (selected === correct) {
+                resultDiv.textContent = '🎉 Correct!';
+                resultDiv.style.color = '#4caf50';
+                setTimeout(() => {
+                    completeCheckpoint();
+                }, 1500);
+            } else {
+                resultDiv.textContent = '❌ Wrong! Try again!';
+                resultDiv.style.color = '#f44336';
+                setTimeout(() => {
+                    initMiniGame4();
+                }, 2000);
+            }
+        }
+
+        // Mini Game 5: Word Scramble
+        function initMiniGame5() {
+            const words = ['LOVE', 'GAME', 'HAPPY', 'MUSIC', 'DREAM'];
+            const word = words[Math.floor(Math.random() * words.length)];
+            const scrambled = word.split('').sort(() => Math.random() - 0.5).join('');
+            
+            const content = `
+                <div class="mini-game-header">
+                    <h2>Checkpoint 5: Word Scramble 🔤</h2>
+                    <p>Unscramble this word!</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="font-size: 2rem; margin: 30px 0; letter-spacing: 5px;">${scrambled}</p>
+                    <input type="text" class="guess-input" id="wordAnswer" placeholder="Enter the word..." style="text-transform: uppercase;">
+                    <div>
+                        <button class="game-btn" onclick="checkWordAnswer('${word}')">Submit</button>
+                    </div>
+                    <div id="wordResult" style="margin-top: 15px; font-size: 1.1rem;"></div>
+                </div>
+            `;
+            document.getElementById('miniGameContent').innerHTML = content;
+            document.getElementById('wordAnswer').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkWordAnswer(word);
+            });
+            document.getElementById('wordAnswer').focus();
+        }
+
+        function checkWordAnswer(correctWord) {
+            const userAnswer = document.getElementById('wordAnswer').value.trim().toUpperCase();
+            const resultDiv = document.getElementById('wordResult');
+            
+            if (userAnswer === correctWord) {
+                resultDiv.textContent = '🎉 Correct! Well done!';
+                resultDiv.style.color = '#4caf50';
+                setTimeout(() => {
+                    completeCheckpoint();
+                }, 1500);
+            } else {
+                resultDiv.textContent = `❌ Incorrect! The word is "${correctWord}". Try again!`;
+                resultDiv.style.color = '#f44336';
+            }
+        }
+
+        // Game loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (gameState === 'playing' || gameState === 'miniGame') {
+                drawBackground();
+                if (gameState === 'playing') {
+                    updatePlayer();
+                    updateEnemies();
+                }
+                updateParticles();
+                drawPlatforms();
+                drawQuestionBlocks();
+                drawCoins();
+                drawEnemies();
+                drawCheckpoints();
+                drawParticles();
+                if (gameState === 'playing') {
+                    drawPlayer();
+                }
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Initialize game
+        createLevel();
+        updateUI();
+        gameLoop();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Keep aspect ratio
+            const container = document.getElementById('gameContainer');
+            const maxWidth = window.innerWidth - 40;
+            const maxHeight = window.innerHeight - 40;
+            const aspectRatio = canvas.width / canvas.height;
+
+            let newWidth = maxWidth;
+            let newHeight = newWidth / aspectRatio;
+
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                newWidth = newHeight * aspectRatio;
+            }
+
+            container.style.width = newWidth + 'px';
+            container.style.height = newHeight + 'px';
+        });
+
+        // Initial resize
+        window.dispatchEvent(new Event('resize'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Hole Adventure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000000;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            cursor: none;
+        }
+
+        #ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #8b008b;
+            font-size: 18px;
+            z-index: 100;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            font-weight: 600;
+        }
+
+        #instructions {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #8b008b;
+            text-align: center;
+            z-index: 200;
+            background: rgba(255, 192, 203, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #ff69b4;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+        }
+
+        #instructions h2 {
+            margin-bottom: 15px;
+            font-size: 28px;
+            color: #c71585;
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.8);
+        }
+
+        #instructions p {
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #8b008b;
+        }
+
+        #instructions.hidden {
+            display: none;
+        }
+
+        #triviaModal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 50%, #ffb3d9 100%);
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid #ff69b4;
+            box-shadow: 0 0 40px rgba(255, 105, 180, 0.6), inset 0 0 20px rgba(255, 182, 193, 0.3);
+            z-index: 300;
+            max-width: 600px;
+            width: 90%;
+            color: #8b008b;
+            text-align: center;
+            display: none;
+        }
+
+        #triviaModal.visible {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        #triviaModal h2 {
+            color: #c71585;
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255, 105, 180, 0.8);
+        }
+
+        #question {
+            font-size: 22px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            color: #8b008b;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        #answers {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .answer-btn {
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 100%);
+            border: 2px solid #ff69b4;
+            color: #8b008b;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .answer-btn:hover {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            color: white;
+            transform: translateX(10px);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+        }
+
+        .answer-btn.correct {
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            border-color: #ff69b4;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.8);
+        }
+
+        .answer-btn.wrong {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            border-color: #ff0000;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #nextBtn {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        #nextBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 105, 180, 0.8);
+        }
+
+        #nextBtn.hidden {
+            display: none;
+        }
+
+        .score {
+            font-size: 24px;
+            color: #ff1493;
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.8);
+        }
+
+
+        #audioPlayer {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .audio-controls {
+            display: none; /* Hidden - no play button needed */
+        }
+
+        .audio-btn {
+            display: none; /* Hidden - no play button needed */
+        }
+
+        #songInfo {
+            font-size: 16px;
+            color: #8b008b;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="ui">
+        <div>Distance to Nearest Black Hole: <span id="distance">0</span> km</div>
+        <div>Score: <span id="score" class="score">0</span></div>
+        <div>Speed: <span id="speed">0</span> km/s</div>
+    </div>
+
+    <div id="instructions">
+        <h2>🚀 Black Hole Adventure</h2>
+        <p><strong>Controls:</strong></p>
+        <p>↑ ↓ ← → Arrow Keys or WASD to move</p>
+        <p>Navigate your spaceship toward any of the 5 black holes</p>
+        <p>Each black hole has a unique challenge!</p>
+        <p style="margin-top: 20px; color: #00ffff;">Press SPACE to start</p>
+    </div>
+
+    <div id="triviaModal">
+        <h2 id="gameTitle">🌌 Black Hole Challenge</h2>
+        <div id="gameContent">
+            <div id="question"></div>
+            <div id="answers"></div>
+            <div id="songGame" style="display: none;">
+                <div id="songInfo">Listen to the song and guess its name</div>
+                <audio id="audioPlayer" autoplay></audio>
+                <div class="audio-controls" style="display: none;">
+                    <button id="playPauseBtn" class="audio-btn" style="display: none;">Play</button>
+                    <span id="timeDisplay" style="display: none;">0:00 / 0:00</span>
+                </div>
+                <div id="songAnswers" style="display: flex; flex-direction: column; gap: 15px;"></div>
+            </div>
+        </div>
+        <div id="result"></div>
+        <button id="nextBtn" class="hidden">Continue</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const instructions = document.getElementById('instructions');
+        const triviaModal = document.getElementById('triviaModal');
+        const questionEl = document.getElementById('question');
+        const answersEl = document.getElementById('answers');
+        const resultEl = document.getElementById('result');
+        const nextBtn = document.getElementById('nextBtn');
+        const distanceEl = document.getElementById('distance');
+        const scoreEl = document.getElementById('score');
+        const speedEl = document.getElementById('speed');
+        const gameTitleEl = document.getElementById('gameTitle');
+        const gameContentEl = document.getElementById('gameContent');
+        const songGameEl = document.getElementById('songGame');
+        let audioPlayer = document.getElementById('audioPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const timeDisplay = document.getElementById('timeDisplay');
+
+        // World dimensions (bigger than canvas)
+        const WORLD_WIDTH = 5000;
+        const WORLD_HEIGHT = 5000;
+
+        // Camera/viewport
+        const camera = {
+            x: 0,
+            y: 0
+        };
+
+        // Set canvas size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Game state
+        let gameState = 'menu'; // menu, playing, entering, game
+        let keys = {};
+        let score = 0;
+        let currentQuestionIndex = 0;
+        let currentSongIndex = 0;
+        let answered = false;
+        let currentBlackHole = null;
+
+        // Spaceship - improved design
+        const ship = {
+            x: WORLD_WIDTH / 2,
+            y: WORLD_HEIGHT / 2,
+            width: 50,
+            height: 50,
+            angle: 0,
+            speed: 0,
+            maxSpeed: 10,
+            acceleration: 0.4,
+            rotationSpeed: 0.06
+        };
+
+        // Multiple black holes with unique games
+        // TO CONFIGURE THE SONG GAME:
+        // 1. Place your song files in the project folder (e.g., "song1.mp3", "song2.mp3", "song3.mp3")
+        // 2. Update the songs array below with paths and correct names
+        // 3. You need 3 songs total
+        const blackHoles = [
+            { 
+                x: WORLD_WIDTH * 0.2, 
+                y: WORLD_HEIGHT * 0.2, 
+                radius: 100, 
+                eventHorizon: 80, 
+                accretionDisk: [], 
+                color: '#ff69b4',
+                completed: false,
+                gameType: 'song',
+                gameData: {
+                    songs: [
+                        { 
+                            songFile: 'public/songs/The Weeknd - Blinding Lights (Official Audio) - TheWeekndVEVO.mp3', 
+                            songName: 'Blinding Lights',
+                            options: ['Blinding Lights', 'Starboy', 'The Hills', 'Can\'t Feel My Face'],
+                            correct: 0
+                        },
+                        { 
+                            songFile: 'public/songs/Die For You - The Weeknd.mp3', 
+                            songName: 'Die For You',
+                            options: ['Earned It', 'Die For You', 'Call Out My Name', 'Save Your Tears'],
+                            correct: 1
+                        },
+                        { 
+                            songFile: 'public/songs/Often (Kygo Remix) - The Weeknd.mp3', 
+                            songName: 'Often',
+                            options: ['Often', 'I Feel It Coming', 'Pray For Me', 'Reminder'],
+                            correct: 0
+                        }
+                    ]
+                }
+            },
+            { 
+                x: WORLD_WIDTH * 0.8, 
+                y: WORLD_HEIGHT * 0.3, 
+                radius: 120, 
+                eventHorizon: 95, 
+                accretionDisk: [], 
+                color: '#ff00ff',
+                completed: false,
+                gameType: 'trivia',
+                gameData: null
+            },
+            { 
+                x: WORLD_WIDTH * 0.5, 
+                y: WORLD_HEIGHT * 0.7, 
+                radius: 110, 
+                eventHorizon: 85, 
+                accretionDisk: [], 
+                color: '#ff69b4',
+                completed: false,
+                gameType: 'trivia',
+                gameData: null
+            },
+            { 
+                x: WORLD_WIDTH * 0.15, 
+                y: WORLD_HEIGHT * 0.85, 
+                radius: 105, 
+                eventHorizon: 82, 
+                accretionDisk: [], 
+                color: '#ffff00',
+                completed: false,
+                gameType: 'trivia',
+                gameData: null
+            },
+            { 
+                x: WORLD_WIDTH * 0.75, 
+                y: WORLD_HEIGHT * 0.75, 
+                radius: 115, 
+                eventHorizon: 90, 
+                accretionDisk: [], 
+                color: '#ff6600',
+                completed: false,
+                gameType: 'trivia',
+                gameData: null
+            }
+        ];
+
+        // Stars background - fill the entire world
+        const stars = [];
+        for (let i = 0; i < 2000; i++) {
+            stars.push({
+                x: Math.random() * WORLD_WIDTH,
+                y: Math.random() * WORLD_HEIGHT,
+                size: Math.random() * 2.5,
+                brightness: Math.random()
+            });
+        }
+
+        // Particles for effects
+        const particles = [];
+        const blackHoleParticles = [];
+        
+        // Meteors
+        const meteors = [];
+        
+        // Helper function to convert HSL to RGBA
+        function hslToRgba(h, s, l, a = 1) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            let r, g, b;
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${a})`;
+        }
+        
+        // Initialize meteors
+        function initMeteors() {
+            for (let i = 0; i < 15; i++) {
+                const hue = Math.random() * 30 + 320; // Pink hues (320-350)
+                const saturation = 100;
+                const lightness = 60 + Math.random() * 40;
+                meteors.push({
+                    x: Math.random() * WORLD_WIDTH,
+                    y: Math.random() * WORLD_HEIGHT,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3 + 1,
+                    length: 30 + Math.random() * 40,
+                    speed: 2 + Math.random() * 3,
+                    size: 2 + Math.random() * 3,
+                    life: 1,
+                    color: `hsl(${hue}, ${saturation}%, ${lightness}%)`, // Pink hues
+                    hue: hue,
+                    saturation: saturation,
+                    lightness: lightness
+                });
+            }
+        }
+        initMeteors();
+        
+        // Update meteors
+        function updateMeteors() {
+            for (let meteor of meteors) {
+                meteor.x += meteor.vx * meteor.speed;
+                meteor.y += meteor.vy * meteor.speed;
+                
+                // Wrap around world bounds
+                if (meteor.x < 0) meteor.x = WORLD_WIDTH;
+                if (meteor.x > WORLD_WIDTH) meteor.x = 0;
+                if (meteor.y < 0) meteor.y = WORLD_HEIGHT;
+                if (meteor.y > WORLD_HEIGHT) meteor.y = 0;
+            }
+        }
+        
+        // Draw meteors
+        function drawMeteors() {
+            for (let meteor of meteors) {
+                const screenX = meteor.x - camera.x;
+                const screenY = meteor.y - camera.y;
+                
+                // Only draw if in viewport
+                if (screenX > -meteor.length && screenX < canvas.width + meteor.length &&
+                    screenY > -meteor.length && screenY < canvas.height + meteor.length) {
+                    
+                    // Draw meteor trail
+                    const gradient = ctx.createLinearGradient(
+                        screenX, screenY,
+                        screenX - meteor.vx * meteor.length, screenY - meteor.vy * meteor.length
+                    );
+                    gradient.addColorStop(0, meteor.color);
+                    gradient.addColorStop(0.5, hslToRgba(meteor.hue, meteor.saturation, meteor.lightness, 0.5));
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    ctx.strokeStyle = gradient;
+                    ctx.lineWidth = meteor.size;
+                    ctx.lineCap = 'round';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = meteor.color;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(screenX, screenY);
+                    ctx.lineTo(
+                        screenX - meteor.vx * meteor.length,
+                        screenY - meteor.vy * meteor.length
+                    );
+                    ctx.stroke();
+                    
+                    // Draw meteor head (bright point)
+                    ctx.fillStyle = meteor.color;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, meteor.size * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        // Initialize accretion disks for all black holes
+        function initAccretionDisks() {
+            blackHoles.forEach(blackHole => {
+                blackHole.accretionDisk = [];
+                for (let i = 0; i < 200; i++) {
+                    const angle = (Math.PI * 2 / 200) * i;
+                    const distance = blackHole.radius + 20 + Math.random() * 100;
+                    blackHole.accretionDisk.push({
+                        angle: angle,
+                        distance: distance,
+                        speed: 0.02 + Math.random() * 0.03,
+                        size: 2 + Math.random() * 3
+                    });
+                }
+            });
+        }
+        initAccretionDisks();
+
+        // Update camera to follow ship
+        function updateCamera() {
+            camera.x = ship.x - canvas.width / 2;
+            camera.y = ship.y - canvas.height / 2;
+            
+            // Clamp camera to world bounds
+            camera.x = Math.max(0, Math.min(WORLD_WIDTH - canvas.width, camera.x));
+            camera.y = Math.max(0, Math.min(WORLD_HEIGHT - canvas.height, camera.y));
+        }
+
+        // Trivia questions
+        const triviaQuestions = [
+            {
+                question: "What is the event horizon of a black hole?",
+                answers: [
+                    "The point of no return where escape velocity exceeds light speed",
+                    "The center of the black hole",
+                    "The outer edge of the accretion disk",
+                    "The point where time stops"
+                ],
+                correct: 0
+            },
+            {
+                question: "What happens to time near a black hole?",
+                answers: [
+                    "Time speeds up",
+                    "Time slows down (time dilation)",
+                    "Time stops completely",
+                    "Time reverses"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is a black hole's singularity?",
+                answers: [
+                    "The outer edge",
+                    "A point of infinite density at the center",
+                    "The accretion disk",
+                    "The event horizon"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is spaghettification?",
+                answers: [
+                    "A type of pasta",
+                    "The stretching of objects by tidal forces near a black hole",
+                    "The formation of a black hole",
+                    "The accretion disk shape"
+                ],
+                correct: 1
+            },
+            {
+                question: "Who first predicted the existence of black holes?",
+                answers: [
+                    "Albert Einstein",
+                    "Stephen Hawking",
+                    "Karl Schwarzschild",
+                    "Isaac Newton"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is Hawking radiation?",
+                answers: [
+                    "Light emitted by black holes",
+                    "Radiation predicted to be emitted by black holes due to quantum effects",
+                    "The accretion disk glow",
+                    "Gamma rays from black holes"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the Schwarzschild radius?",
+                answers: [
+                    "The distance from Earth to the black hole",
+                    "The radius of the event horizon for a non-rotating black hole",
+                    "The size of the accretion disk",
+                    "The maximum speed near a black hole"
+                ],
+                correct: 1
+            },
+            {
+                question: "Can light escape from inside a black hole's event horizon?",
+                answers: [
+                    "Yes, always",
+                    "No, not even light can escape",
+                    "Only visible light",
+                    "Only gamma rays"
+                ],
+                correct: 1
+            }
+        ];
+
+
+        // Input handling
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            keys[e.code] = true;
+            
+            if (e.code === 'Space' && gameState === 'menu') {
+                gameState = 'playing';
+                instructions.classList.add('hidden');
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+            keys[e.code] = false;
+        });
+
+        // Calculate distance to black hole
+        function getDistance(x1, y1, x2, y2) {
+            return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+        }
+
+        // Update spaceship
+        function updateShip() {
+            // Check if ship is touching any black hole
+            let touchingBlackHole = false;
+            let nearestBlackHole = null;
+            let nearestDist = Infinity;
+            
+            for (let blackHole of blackHoles) {
+                const dist = getDistance(ship.x, ship.y, blackHole.x, blackHole.y);
+                if (dist < blackHole.eventHorizon + 10) { // Add small buffer
+                    touchingBlackHole = true;
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
+                        nearestBlackHole = blackHole;
+                    }
+                }
+            }
+            
+            // If touching black hole, stop ship and trigger game
+            if (touchingBlackHole && gameState === 'playing') {
+                ship.speed = 0; // Stop the ship
+                
+                // Pull ship to black hole center slightly (gravitational effect)
+                if (nearestBlackHole) {
+                    const angle = Math.atan2(nearestBlackHole.y - ship.y, nearestBlackHole.x - ship.x);
+                    const pullStrength = 0.3;
+                    ship.x += Math.cos(angle) * pullStrength;
+                    ship.y += Math.sin(angle) * pullStrength;
+                    
+                    // Keep ship at event horizon boundary
+                    const dist = getDistance(ship.x, ship.y, nearestBlackHole.x, nearestBlackHole.y);
+                    if (dist < nearestBlackHole.eventHorizon) {
+                        // Position ship at event horizon
+                        ship.x = nearestBlackHole.x + Math.cos(angle) * nearestBlackHole.eventHorizon;
+                        ship.y = nearestBlackHole.y + Math.sin(angle) * nearestBlackHole.eventHorizon;
+                    }
+                    
+                    // Trigger game immediately when touching event horizon
+                    if (dist < nearestBlackHole.eventHorizon + 5) {
+                        currentBlackHole = nearestBlackHole;
+                        // Reset game indices
+                        currentQuestionIndex = 0;
+                        currentSongIndex = 0;
+                        gameState = 'game';
+                        showGame();
+                    }
+                }
+                return; // Don't process normal movement
+            }
+            
+            // Rotation (only if not touching black hole)
+            if (keys['a'] || keys['ArrowLeft']) {
+                ship.angle -= ship.rotationSpeed;
+            }
+            if (keys['d'] || keys['ArrowRight']) {
+                ship.angle += ship.rotationSpeed;
+            }
+
+            // Acceleration
+            if (keys['w'] || keys['ArrowUp']) {
+                ship.speed = Math.min(ship.speed + ship.acceleration, ship.maxSpeed);
+            } else if (keys['s'] || keys['ArrowDown']) {
+                ship.speed = Math.max(ship.speed - ship.acceleration * 0.5, -ship.maxSpeed * 0.5);
+            } else {
+                ship.speed *= 0.95; // Friction
+            }
+
+            // Movement
+            const newX = ship.x + Math.cos(ship.angle) * ship.speed;
+            const newY = ship.y + Math.sin(ship.angle) * ship.speed;
+            
+            // Check if new position would enter a black hole
+            let wouldEnterBlackHole = false;
+            for (let blackHole of blackHoles) {
+                const dist = getDistance(newX, newY, blackHole.x, blackHole.y);
+                if (dist < blackHole.eventHorizon) {
+                    wouldEnterBlackHole = true;
+                    // Stop ship at event horizon
+                    ship.speed = 0;
+                    break;
+                }
+            }
+            
+            // Only move if not entering black hole
+            if (!wouldEnterBlackHole) {
+                ship.x = newX;
+                ship.y = newY;
+            }
+
+            // Boundary check (world bounds)
+            ship.x = Math.max(0, Math.min(WORLD_WIDTH, ship.x));
+            ship.y = Math.max(0, Math.min(WORLD_HEIGHT, ship.y));
+
+            // Create exhaust particles
+            if (ship.speed > 0.5) {
+                for (let i = 0; i < 2; i++) {
+                    particles.push({
+                        x: ship.x - Math.cos(ship.angle) * ship.width / 2,
+                        y: ship.y - Math.sin(ship.angle) * ship.height / 2,
+                        vx: -Math.cos(ship.angle) * 2 + (Math.random() - 0.5) * 2,
+                        vy: -Math.sin(ship.angle) * 2 + (Math.random() - 0.5) * 2,
+                        life: 1,
+                        decay: 0.02,
+                        size: 3 + Math.random() * 3,
+                        color: `hsl(${Math.random() * 60 + 15}, 100%, ${50 + Math.random() * 50}%)`
+                    });
+                }
+            }
+        }
+
+        // Update particles
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // Black hole particle effects
+            if ((gameState === 'entering' || gameState === 'game') && currentBlackHole) {
+                for (let i = 0; i < 10; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const dist = currentBlackHole.radius + Math.random() * 50;
+                    blackHoleParticles.push({
+                        x: currentBlackHole.x + Math.cos(angle) * dist,
+                        y: currentBlackHole.y + Math.sin(angle) * dist,
+                        vx: Math.cos(angle) * (2 + Math.random() * 3),
+                        vy: Math.sin(angle) * (2 + Math.random() * 3),
+                        life: 1,
+                        decay: 0.01,
+                        size: 2 + Math.random() * 4,
+                        color: currentBlackHole.color
+                    });
+                }
+            }
+
+            for (let i = blackHoleParticles.length - 1; i >= 0; i--) {
+                const p = blackHoleParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+                
+                if (p.life <= 0) {
+                    blackHoleParticles.splice(i, 1);
+                }
+            }
+        }
+
+        // Update accretion disks
+        function updateAccretionDisks() {
+            blackHoles.forEach(blackHole => {
+                for (let particle of blackHole.accretionDisk) {
+                    particle.angle += particle.speed;
+                }
+            });
+        }
+
+        // Draw stars (only visible ones) - pink sparkles!
+        function drawStars() {
+            for (let star of stars) {
+                // Only draw stars in viewport
+                const screenX = star.x - camera.x;
+                const screenY = star.y - camera.y;
+                
+                if (screenX >= -10 && screenX <= canvas.width + 10 &&
+                    screenY >= -10 && screenY <= canvas.height + 10) {
+                    const alpha = star.brightness * 0.9;
+                    ctx.globalAlpha = alpha;
+                    
+                    // Pink stars only
+                    const pinkColors = ['#ffb6c1', '#ffc0cb', '#ff69b4', '#ff1493', '#ff91a4', '#ffb3d9'];
+                    ctx.fillStyle = pinkColors[Math.floor(Math.random() * pinkColors.length)];
+                    
+                    // Add glow effect
+                    ctx.shadowBlur = star.size * 2;
+                    ctx.shadowColor = ctx.fillStyle;
+                    
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.shadowBlur = 0;
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // Draw all black holes
+        function drawBlackHoles() {
+            blackHoles.forEach(blackHole => {
+                const screenX = blackHole.x - camera.x;
+                const screenY = blackHole.y - camera.y;
+                
+                // Only draw if in viewport (with margin)
+                if (screenX > -blackHole.radius * 3 && screenX < canvas.width + blackHole.radius * 3 &&
+                    screenY > -blackHole.radius * 3 && screenY < canvas.height + blackHole.radius * 3) {
+                    
+                    // Accretion disk - pink particles
+                    for (let particle of blackHole.accretionDisk) {
+                        const x = screenX + Math.cos(particle.angle) * particle.distance;
+                        const y = screenY + Math.sin(particle.angle) * particle.distance;
+                        
+                        const gradient = ctx.createRadialGradient(x, y, 0, x, y, particle.size * 2);
+                        // Use pink colors instead of black hole color
+                        const pinkColors = [
+                            {r: 255, g: 105, b: 180}, // Hot pink
+                            {r: 255, g: 182, b: 193}, // Light pink
+                            {r: 255, g: 192, b: 203}, // Pink
+                            {r: 255, g: 20, b: 147},   // Deep pink
+                            {r: 255, g: 145, b: 164}   // Light pink
+                        ];
+                        const pinkColor = pinkColors[Math.floor(Math.random() * pinkColors.length)];
+                        gradient.addColorStop(0, `rgba(${pinkColor.r}, ${pinkColor.g}, ${pinkColor.b}, 0.8)`);
+                        gradient.addColorStop(1, 'transparent');
+                        
+                        ctx.fillStyle = gradient;
+                        ctx.beginPath();
+                        ctx.arc(x, y, particle.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Event horizon glow
+                    const glowGradient = ctx.createRadialGradient(
+                        screenX, screenY, 0,
+                        screenX, screenY, blackHole.eventHorizon * 2
+                    );
+                    const rgb = hexToRgb(blackHole.color);
+                    glowGradient.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.3)`);
+                    glowGradient.addColorStop(0.5, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.2)`);
+                    glowGradient.addColorStop(1, 'transparent');
+                    
+                    ctx.fillStyle = glowGradient;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, blackHole.eventHorizon * 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Event horizon ring
+                    ctx.strokeStyle = blackHole.color;
+                    ctx.lineWidth = 3;
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = blackHole.color;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, blackHole.eventHorizon, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    // Black hole center (black with slight glow)
+                    const centerGradient = ctx.createRadialGradient(
+                        screenX, screenY, 0,
+                        screenX, screenY, blackHole.radius
+                    );
+                    centerGradient.addColorStop(0, '#000000');
+                    centerGradient.addColorStop(0.7, '#000011');
+                    centerGradient.addColorStop(1, '#000033');
+                    
+                    ctx.fillStyle = centerGradient;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, blackHole.radius, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Draw number in center
+                    const blackHoleIndex = blackHoles.indexOf(blackHole) + 1;
+                    ctx.save();
+                    ctx.font = `bold ${blackHole.radius * 0.8}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = blackHole.color;
+                    ctx.fillStyle = blackHole.color;
+                    ctx.fillText(blackHoleIndex.toString(), screenX, screenY);
+                    ctx.restore();
+                    
+                    // Draw checkmark if completed
+                    if (blackHole.completed) {
+                        ctx.save();
+                        // Draw checkmark circle background
+                        ctx.fillStyle = '#ff69b4';
+                        ctx.beginPath();
+                        ctx.arc(screenX + blackHole.radius * 0.7, screenY - blackHole.radius * 0.7, blackHole.radius * 0.3, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Draw checkmark
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = blackHole.radius * 0.15;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.shadowBlur = 5;
+                        ctx.shadowColor = '#ff69b4';
+                        ctx.beginPath();
+                        ctx.moveTo(screenX + blackHole.radius * 0.7 - blackHole.radius * 0.15, screenY - blackHole.radius * 0.7);
+                        ctx.lineTo(screenX + blackHole.radius * 0.7 - blackHole.radius * 0.05, screenY - blackHole.radius * 0.7 + blackHole.radius * 0.1);
+                        ctx.lineTo(screenX + blackHole.radius * 0.7 + blackHole.radius * 0.15, screenY - blackHole.radius * 0.7 - blackHole.radius * 0.1);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                    
+                    // Draw checkmark if completed
+                    if (blackHole.completed) {
+                        ctx.save();
+                        // Draw checkmark circle background
+                        ctx.fillStyle = '#ff69b4';
+                        ctx.beginPath();
+                        ctx.arc(screenX + blackHole.radius * 0.7, screenY - blackHole.radius * 0.7, blackHole.radius * 0.3, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Draw checkmark
+                        ctx.strokeStyle = 'white';
+                        ctx.lineWidth = blackHole.radius * 0.15;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.beginPath();
+                        ctx.moveTo(screenX + blackHole.radius * 0.7 - blackHole.radius * 0.15, screenY - blackHole.radius * 0.7);
+                        ctx.lineTo(screenX + blackHole.radius * 0.7 - blackHole.radius * 0.05, screenY - blackHole.radius * 0.7 + blackHole.radius * 0.1);
+                        ctx.lineTo(screenX + blackHole.radius * 0.7 + blackHole.radius * 0.15, screenY - blackHole.radius * 0.7 - blackHole.radius * 0.1);
+                        ctx.stroke();
+                        
+                        // Add glow effect
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = '#ff69b4';
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            });
+        }
+
+        // Helper function to convert hex to RGB
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 255, b: 255 };
+        }
+
+        // Draw spaceship - improved design
+        function drawShip() {
+            const screenX = ship.x - camera.x;
+            const screenY = ship.y - camera.y;
+            
+            ctx.save();
+            ctx.translate(screenX, screenY);
+            ctx.rotate(ship.angle);
+
+            // Ship glow - pink!
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ff69b4';
+            
+            // Main body (sleek triangular shape) - pink gradient
+            const gradient = ctx.createLinearGradient(-ship.width/2, 0, ship.width/2, 0);
+            gradient.addColorStop(0, '#ffb6c1');
+            gradient.addColorStop(0.5, '#ff69b4');
+            gradient.addColorStop(1, '#ff1493');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(ship.width / 2, 0);
+            ctx.lineTo(-ship.width / 2, -ship.height / 2.5);
+            ctx.lineTo(-ship.width / 3, 0);
+            ctx.lineTo(-ship.width / 2, ship.height / 2.5);
+            ctx.closePath();
+            ctx.fill();
+
+            // Wing details - lighter pink
+            ctx.fillStyle = '#ffc0cb';
+            ctx.beginPath();
+            ctx.moveTo(-ship.width / 2, -ship.height / 2.5);
+            ctx.lineTo(-ship.width / 2.5, -ship.height / 3);
+            ctx.lineTo(-ship.width / 3, -ship.height / 4);
+            ctx.lineTo(-ship.width / 3, 0);
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(-ship.width / 2, ship.height / 2.5);
+            ctx.lineTo(-ship.width / 2.5, ship.height / 3);
+            ctx.lineTo(-ship.width / 3, ship.height / 4);
+            ctx.lineTo(-ship.width / 3, 0);
+            ctx.closePath();
+            ctx.fill();
+
+            // Cockpit window - pink
+            const cockpitGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, ship.width / 5);
+            cockpitGradient.addColorStop(0, '#ffb6c1');
+            cockpitGradient.addColorStop(0.7, '#ff69b4');
+            cockpitGradient.addColorStop(1, '#ff1493');
+            ctx.fillStyle = cockpitGradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, ship.width / 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cockpit highlight
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.beginPath();
+            ctx.arc(-ship.width / 10, -ship.width / 10, ship.width / 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Ship outline/details - pink
+            ctx.strokeStyle = '#ff1493';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(ship.width / 2, 0);
+            ctx.lineTo(-ship.width / 2, -ship.height / 2.5);
+            ctx.moveTo(ship.width / 2, 0);
+            ctx.lineTo(-ship.width / 2, ship.height / 2.5);
+            ctx.moveTo(-ship.width / 2, -ship.height / 2.5);
+            ctx.lineTo(-ship.width / 2, ship.height / 2.5);
+            ctx.stroke();
+
+            // Engine glow (when moving) - pink
+            if (ship.speed > 0.5) {
+                const engineGradient = ctx.createLinearGradient(-ship.width / 2, 0, -ship.width / 1.5, 0);
+                engineGradient.addColorStop(0, 'rgba(255, 105, 180, 0.8)');
+                engineGradient.addColorStop(0.5, 'rgba(255, 182, 193, 0.6)');
+                engineGradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = engineGradient;
+                ctx.beginPath();
+                ctx.moveTo(-ship.width / 2, -ship.height / 4);
+                ctx.lineTo(-ship.width / 1.5, 0);
+                ctx.lineTo(-ship.width / 2, ship.height / 4);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            // Side thrusters - pink
+            ctx.fillStyle = '#ff69b4';
+            ctx.fillRect(-ship.width / 2.2, -ship.height / 3, 3, 8);
+            ctx.fillRect(-ship.width / 2.2, ship.height / 3 - 8, 3, 8);
+
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+
+        // Draw particles
+        function drawParticles() {
+            for (let p of particles) {
+                const screenX = p.x - camera.x;
+                const screenY = p.y - camera.y;
+                
+                if (screenX > -50 && screenX < canvas.width + 50 &&
+                    screenY > -50 && screenY < canvas.height + 50) {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, p.size * p.life, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.globalAlpha = 1;
+
+            for (let p of blackHoleParticles) {
+                const screenX = p.x - camera.x;
+                const screenY = p.y - camera.y;
+                
+                if (screenX > -50 && screenX < canvas.width + 50 &&
+                    screenY > -50 && screenY < canvas.height + 50) {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(screenX, screenY, p.size * p.life, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            ctx.globalAlpha = 1;
+        }
+
+        // Show game based on black hole type
+        function showGame() {
+            if (!currentBlackHole) return;
+
+            // Hide all game types
+            songGameEl.style.display = 'none';
+            questionEl.style.display = 'block';
+            answersEl.style.display = 'flex';
+
+            if (currentBlackHole.gameType === 'song') {
+                showSongGame();
+            } else if (currentBlackHole.gameType === 'trivia') {
+                showTrivia();
+            }
+        }
+
+        // Track if song was answered correctly
+        let songAnswered = false;
+        let lastValidTime = 0;
+
+        // Show song guessing game
+        function showSongGame() {
+            const gameData = currentBlackHole.gameData;
+            
+            // Check if all songs are completed
+            if (currentSongIndex >= gameData.songs.length) {
+                // All songs completed - escape from black hole
+                triviaModal.classList.remove('visible');
+                gameState = 'playing';
+                currentSongIndex = 0; // Reset for next time
+                
+                // Mark black hole as completed
+                if (currentBlackHole) {
+                    currentBlackHole.completed = true;
+                }
+                
+                // Teleport ship away from the black hole
+                const angle = Math.atan2(ship.y - currentBlackHole.y, ship.x - currentBlackHole.x);
+                ship.x = currentBlackHole.x + Math.cos(angle) * (currentBlackHole.eventHorizon + 200);
+                ship.y = currentBlackHole.y + Math.sin(angle) * (currentBlackHole.eventHorizon + 200);
+                
+                // Stop audio
+                audioPlayer.pause();
+                audioPlayer.src = '';
+                
+                currentBlackHole = null;
+                blackHoleParticles.length = 0;
+                return;
+            }
+            
+            const currentSong = gameData.songs[currentSongIndex];
+            gameTitleEl.textContent = `🎵 Guess the Song (${currentSongIndex + 1}/${gameData.songs.length})`;
+            songGameEl.style.display = 'block';
+            questionEl.style.display = 'none';
+            answersEl.style.display = 'none';
+            resultEl.textContent = '';
+            nextBtn.classList.add('hidden');
+            songAnswered = false;
+            lastValidTime = 0;
+            
+            // Clear previous song answers
+            const songAnswersEl = document.getElementById('songAnswers');
+            songAnswersEl.innerHTML = '';
+            
+            // Create MCQ buttons
+            if (currentSong.options) {
+                currentSong.options.forEach((option, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'answer-btn';
+                    btn.textContent = option;
+                    btn.style.opacity = '0';
+                    btn.onclick = () => selectSongAnswer(index, currentSong.correct);
+                    songAnswersEl.appendChild(btn);
+                    
+                    // Fade in button
+                    setTimeout(() => {
+                        btn.style.transition = 'opacity 0.3s ease';
+                        btn.style.opacity = '1';
+                    }, 200 + (index * 50));
+                });
+            }
+            
+            // Set up audio player
+            if (currentSong.songFile) {
+                // Reset audio
+                audioPlayer.pause();
+                audioPlayer.controls = false; // No native controls - prevents seeking
+                audioPlayer.autoplay = true; // Enable autoplay
+                lastValidTime = 0;
+                
+                // Add error handling for file not found
+                const errorHandler = (e) => {
+                    console.error('Audio error:', e, 'File:', currentSong.songFile);
+                    resultEl.innerHTML = `⚠️ Error: Could not load "${currentSong.songFile}"<br>
+                        <small style="font-size: 14px;">Please ensure:<br>
+                        • The file exists and is named correctly<br>
+                        • It's an MP3, WAV, or OGG file (not MIDI)<br>
+                        • The path is correct relative to spaceship.html</small>`;
+                    resultEl.style.color = '#ffaa00';
+                    const songAnswersEl = document.getElementById('songAnswers');
+                    if (songAnswersEl) {
+                        songAnswersEl.innerHTML = '<p style="color: #ffaa00;">Unable to load song</p>';
+                    }
+                };
+                audioPlayer.addEventListener('error', errorHandler, { once: true });
+                
+                // Set source and load
+                audioPlayer.src = currentSong.songFile;
+                audioPlayer.load();
+                
+                // Monitor time updates to prevent skipping (but allow from middle forward)
+                const timeUpdateHandler = () => {
+                    if (!songAnswered) {
+                        // Get the middle point
+                        const middlePoint = audioPlayer.duration ? audioPlayer.duration / 2 : 0;
+                        
+                        // Only allow forward progress from middle, not skipping backward
+                        if (audioPlayer.currentTime > lastValidTime + 1.5) {
+                            // They skipped forward - reset to last valid position
+                            audioPlayer.currentTime = lastValidTime;
+                        } else if (audioPlayer.currentTime >= lastValidTime) {
+                            // Normal forward progress
+                            lastValidTime = audioPlayer.currentTime;
+                        } else if (audioPlayer.currentTime < middlePoint) {
+                            // They tried to go back before middle - reset to middle
+                            audioPlayer.currentTime = middlePoint;
+                            lastValidTime = middlePoint;
+                        } else if (audioPlayer.currentTime < lastValidTime - 0.5) {
+                            // They tried to go backward from current position - reset
+                            audioPlayer.currentTime = lastValidTime;
+                        }
+                    }
+                };
+                
+                // Remove old listener and add new one
+                audioPlayer.removeEventListener('timeupdate', timeUpdateHandler);
+                audioPlayer.addEventListener('timeupdate', timeUpdateHandler);
+                
+                // Prevent seeking backward from middle
+                const seekHandler = () => {
+                    if (!songAnswered) {
+                        const middlePoint = audioPlayer.duration ? audioPlayer.duration / 2 : 0;
+                        // Don't allow seeking before middle point
+                        if (audioPlayer.currentTime < middlePoint) {
+                            audioPlayer.currentTime = middlePoint;
+                            lastValidTime = middlePoint;
+                        } else if (audioPlayer.currentTime > lastValidTime + 1) {
+                            // Prevent skipping too far forward
+                            audioPlayer.currentTime = lastValidTime;
+                        }
+                    }
+                };
+                audioPlayer.removeEventListener('seeked', seekHandler);
+                audioPlayer.addEventListener('seeked', seekHandler);
+                
+                // Prevent right-click context menu
+                audioPlayer.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    return false;
+                });
+                
+                // Set audio to start from middle when loaded
+                audioPlayer.addEventListener('loadedmetadata', () => {
+                    // Start from the middle of the song
+                    if (audioPlayer.duration) {
+                        const middlePoint = audioPlayer.duration / 2;
+                        audioPlayer.currentTime = middlePoint;
+                        lastValidTime = middlePoint;
+                    } else {
+                        audioPlayer.currentTime = 0;
+                        lastValidTime = 0;
+                    }
+                });
+                
+                // Also set to middle when duration is available
+                audioPlayer.addEventListener('durationchange', () => {
+                    if (audioPlayer.duration && audioPlayer.currentTime === 0) {
+                        const middlePoint = audioPlayer.duration / 2;
+                        audioPlayer.currentTime = middlePoint;
+                        lastValidTime = middlePoint;
+                    }
+                });
+            } else {
+                resultEl.textContent = '⚠️ Song file not set. Please configure the song files for this black hole.';
+                resultEl.style.color = '#ffaa00';
+            }
+            
+            // Keep modal visible (don't toggle)
+            if (!triviaModal.classList.contains('visible')) {
+                triviaModal.classList.add('visible');
+            }
+            
+            // Auto-play when audio is ready - starts from middle
+            const autoPlaySong = () => {
+                if (!currentSong.songFile) return;
+                
+                // Function to start playing from middle
+                const startPlaying = () => {
+                    // Ensure we're at the middle point
+                    if (audioPlayer.duration && audioPlayer.currentTime < audioPlayer.duration / 4) {
+                        audioPlayer.currentTime = audioPlayer.duration / 2;
+                        lastValidTime = audioPlayer.duration / 2;
+                    }
+                    
+                    // Play the audio
+                    audioPlayer.play().then(() => {
+                        console.log('Song auto-playing from middle:', currentSong.songName);
+                    }).catch(e => {
+                        console.log('Auto-play prevented:', e);
+                        // Try again after a short delay
+                        setTimeout(() => {
+                            audioPlayer.play().catch(() => {
+                                console.log('Auto-play failed after retry');
+                            });
+                        }, 100);
+                    });
+                };
+                
+                // If audio is ready, play immediately
+                if (audioPlayer.readyState >= 2) {
+                    startPlaying();
+                } else {
+                    // Wait for audio to be ready, then start from middle
+                    const playWhenReady = () => {
+                        if (audioPlayer.duration) {
+                            audioPlayer.currentTime = audioPlayer.duration / 2;
+                            lastValidTime = audioPlayer.duration / 2;
+                        }
+                        startPlaying();
+                    };
+                    
+                    audioPlayer.addEventListener('loadeddata', playWhenReady, { once: true });
+                    audioPlayer.addEventListener('canplay', playWhenReady, { once: true });
+                    audioPlayer.addEventListener('canplaythrough', playWhenReady, { once: true });
+                }
+            };
+            
+            // Start auto-play process
+            autoPlaySong();
+        }
+
+        // Update audio time display (hidden but kept for potential debugging)
+        function updateTimeDisplay() {
+            // Display is hidden, but function kept for compatibility
+        }
+
+        // Select song answer handler (MCQ)
+        function selectSongAnswer(selected, correct) {
+            if (songAnswered) return; // Already answered correctly, ignore
+            
+            const buttons = document.querySelectorAll('#songAnswers .answer-btn');
+            
+            if (selected === correct) {
+                // Correct answer
+                songAnswered = true;
+                score += 200;
+                buttons[correct].classList.add('correct');
+                
+                const songsLeft = currentBlackHole.gameData.songs.length - currentSongIndex - 1;
+                if (songsLeft > 0) {
+                    resultEl.textContent = `✓ Correct! +200 points (${songsLeft} song${songsLeft > 1 ? 's' : ''} remaining)`;
+                } else {
+                    resultEl.textContent = '✓ Correct! +200 points - All songs completed!';
+                }
+                resultEl.style.color = '#ff69b4';
+                
+                // Disable all buttons
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                // Stop audio
+                if (audioPlayer) {
+                    audioPlayer.pause();
+                }
+                
+                scoreEl.textContent = score;
+                nextBtn.classList.remove('hidden');
+            } else {
+                // Wrong answer - allow retry
+                buttons[selected].classList.add('wrong');
+                resultEl.textContent = '✗ Wrong! Try again.';
+                resultEl.style.color = '#ff0000';
+                
+                // Remove wrong class after a moment to allow retry
+                setTimeout(() => {
+                    buttons[selected].classList.remove('wrong');
+                }, 1000);
+            }
+        }
+
+        // Show trivia
+        function showTrivia() {
+            gameTitleEl.textContent = '🌌 Black Hole Trivia';
+            songGameEl.style.display = 'none';
+            questionEl.style.display = 'block';
+            answersEl.style.display = 'flex';
+            
+            if (currentQuestionIndex >= triviaQuestions.length) {
+                // Game complete
+                questionEl.textContent = "Congratulations! You've escaped the black hole!";
+                answersEl.innerHTML = '';
+                resultEl.textContent = `Final Score: ${score}`;
+                nextBtn.textContent = 'Continue';
+                nextBtn.classList.remove('hidden');
+                triviaModal.classList.add('visible');
+                return;
+            }
+
+            answered = false;
+            const question = triviaQuestions[currentQuestionIndex];
+            
+            // Clear previous question state
+            answersEl.innerHTML = '';
+            resultEl.textContent = '';
+            nextBtn.classList.add('hidden');
+            
+            // Update question with fade effect
+            questionEl.style.opacity = '0';
+            setTimeout(() => {
+                questionEl.textContent = question.question;
+                questionEl.style.opacity = '1';
+            }, 150);
+
+            question.answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer;
+                btn.style.opacity = '0';
+                btn.onclick = () => selectAnswer(index, question.correct);
+                answersEl.appendChild(btn);
+                
+                // Fade in button
+                setTimeout(() => {
+                    btn.style.transition = 'opacity 0.3s ease';
+                    btn.style.opacity = '1';
+                }, 200 + (index * 50));
+            });
+
+            // Keep modal visible (don't toggle)
+            if (!triviaModal.classList.contains('visible')) {
+                triviaModal.classList.add('visible');
+            }
+        }
+
+        // Select answer
+        function selectAnswer(selected, correct) {
+            if (answered) return; // Already answered correctly, ignore
+
+            const buttons = document.querySelectorAll('.answer-btn');
+            
+            if (selected === correct) {
+                // Correct answer
+                answered = true;
+                score += 100;
+                buttons[correct].classList.add('correct');
+                resultEl.textContent = '✓ Correct! +100 points';
+                resultEl.style.color = '#ff69b4';
+                
+                // Disable all buttons
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                scoreEl.textContent = score;
+                nextBtn.classList.remove('hidden');
+            } else {
+                // Wrong answer - allow retry
+                buttons[selected].classList.add('wrong');
+                resultEl.textContent = '✗ Wrong! Try again.';
+                resultEl.style.color = '#ff0000';
+                
+                // Remove wrong class after a moment to allow retry
+                setTimeout(() => {
+                    buttons[selected].classList.remove('wrong');
+                }, 1000);
+            }
+        }
+
+        // Next button handler
+        nextBtn.onclick = () => {
+            if (currentBlackHole && currentBlackHole.gameType === 'song') {
+                // Move to next song - keep modal open
+                currentSongIndex++;
+                showSongGame(); // Will handle escape if all songs completed
+            } else {
+                // Trivia game - next question - keep modal open
+                currentQuestionIndex++;
+                if (currentQuestionIndex < triviaQuestions.length) {
+                    showTrivia(); // Show next question without closing modal
+                } else {
+                    // All questions answered - escape from black hole
+                    triviaModal.classList.remove('visible');
+                    gameState = 'playing';
+                    currentQuestionIndex = 0; // Reset for next black hole
+                    
+                    // Teleport ship away from the black hole
+                    if (currentBlackHole) {
+                        // Mark black hole as completed
+                        currentBlackHole.completed = true;
+                        
+                        const angle = Math.atan2(ship.y - currentBlackHole.y, ship.x - currentBlackHole.x);
+                        ship.x = currentBlackHole.x + Math.cos(angle) * (currentBlackHole.eventHorizon + 200);
+                        ship.y = currentBlackHole.y + Math.sin(angle) * (currentBlackHole.eventHorizon + 200);
+                        currentBlackHole = null;
+                        currentSongIndex = 0; // Reset song index
+                    }
+                    
+                    // Clear particles
+                    blackHoleParticles.length = 0;
+                }
+            }
+        };
+
+        // Update UI
+        function updateUI() {
+            if (gameState === 'playing') {
+                // Find nearest black hole
+                let nearestDist = Infinity;
+                blackHoles.forEach(blackHole => {
+                    const dist = getDistance(ship.x, ship.y, blackHole.x, blackHole.y);
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
+                    }
+                });
+                distanceEl.textContent = Math.floor(nearestDist);
+                speedEl.textContent = Math.abs(Math.floor(ship.speed * 10));
+            }
+        }
+
+        // Main game loop
+        function gameLoop() {
+            // Clear canvas - black space background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (gameState === 'playing' || gameState === 'entering' || gameState === 'game') {
+                updateShip();
+                updateParticles();
+                updateAccretionDisks();
+                updateMeteors();
+                updateCamera();
+                updateUI();
+            }
+
+            // Draw everything
+            drawStars();
+            drawMeteors();
+            drawBlackHoles();
+            
+            if (gameState === 'playing' || gameState === 'entering' || gameState === 'game') {
+                drawShip();
+                drawParticles();
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game loop
+        gameLoop();
+    </script>
+</body>
+</html>
