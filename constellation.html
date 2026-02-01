@@ -55,10 +55,45 @@
                 opacity: 0;
             }
         }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 200, 220, 0.95);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+            color: rgba(255, 255, 255, 1);
+        }
+
+        .back-button:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 
 <body>
+    <a href="index.html" class="back-button">← Back</a>
     <canvas id="loveCanvas"></canvas>
 
     <script>
