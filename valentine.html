@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Will You Be My Valentine? - For Maryam ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -20,9 +20,13 @@
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             overflow-x: hidden;
             font-family: 'Poppins', sans-serif;
             position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            touch-action: manipulation;
         }
 
         @keyframes gradientShift {
@@ -39,6 +43,7 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
         }
 
         .card {
@@ -56,6 +61,9 @@
             animation: fadeInUp 1s ease-out, cardGlow 3s ease-in-out infinite;
             position: relative;
             overflow: hidden;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
         }
 
         .card::before {
@@ -102,6 +110,8 @@
         .card-content {
             position: relative;
             z-index: 1;
+            width: 100%;
+            max-width: 100%;
         }
 
         h1 {
@@ -116,6 +126,9 @@
             line-height: 1.2;
             text-shadow: 0 0 30px rgba(255, 107, 157, 0.3);
             animation: textShimmer 3s ease-in-out infinite;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         @keyframes textShimmer {
@@ -151,6 +164,9 @@
             line-height: 1.8;
             font-weight: 300;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
         }
 
         .question-final {
@@ -185,6 +201,10 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             text-transform: uppercase;
             letter-spacing: 1px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .btn::before {
@@ -280,12 +300,16 @@
             left: 0;
             width: 100%;
             height: 100%;
+            height: -webkit-fill-available;
             background: radial-gradient(circle, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
             z-index: 2000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
             animation: celebrationFadeIn 0.5s ease-out;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         @keyframes celebrationFadeIn {
@@ -312,6 +336,9 @@
             line-height: 1.4;
             padding: 40px;
             margin-bottom: 40px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .close-btn {
@@ -329,6 +356,10 @@
             letter-spacing: 1px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             animation: fadeInUp 0.8s ease-out 0.5s both;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .close-btn:hover {
@@ -432,55 +463,403 @@
             }
         }
 
+        /* Rose Bouquet Styles */
+        .rose-bouquet {
+            position: fixed;
+            pointer-events: none;
+            z-index: 5;
+            font-size: 60px;
+            opacity: 0.7;
+            animation: bouquetFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes bouquetFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(-5deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+        }
+
+        .rose-bouquet.left {
+            left: 5%;
+            top: 10%;
+        }
+
+        .rose-bouquet.right {
+            right: 5%;
+            top: 15%;
+        }
+
+        .rose-bouquet.bottom-left {
+            left: 3%;
+            bottom: 10%;
+        }
+
+        .rose-bouquet.bottom-right {
+            right: 3%;
+            bottom: 15%;
+        }
+
+        /* Falling Roses */
+        .falling-rose {
+            position: fixed;
+            font-size: 30px;
+            pointer-events: none;
+            z-index: 2;
+            animation: roseFall linear forwards;
+        }
+
+        @keyframes roseFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Valentine Decorations */
+        .valentine-decoration {
+            position: fixed;
+            pointer-events: none;
+            z-index: 3;
+            font-size: 40px;
+            opacity: 0.6;
+            animation: decorationFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes decorationFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-15px) scale(1.1);
+            }
+        }
+
+        .cupid {
+            left: 10%;
+            top: 5%;
+            animation-delay: 0s;
+        }
+
+        .love-letter {
+            right: 8%;
+            top: 8%;
+            animation-delay: 1s;
+        }
+
+        .chocolate {
+            left: 7%;
+            bottom: 8%;
+            animation-delay: 2s;
+        }
+
+        .ring {
+            right: 10%;
+            bottom: 5%;
+            animation-delay: 1.5s;
+        }
+
+        /* Rose Petals */
+        .rose-petal {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(135deg, #ff69b4 0%, #ff1493 100%);
+            border-radius: 50% 0 50% 50%;
+            pointer-events: none;
+            z-index: 2;
+            animation: petalFall linear forwards;
+            opacity: 0.8;
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Decorative Hearts Around Card */
+        .card-decoration {
+            position: absolute;
+            font-size: 25px;
+            pointer-events: none;
+            opacity: 0.4;
+            animation: cardDecoFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes cardDecoFloat {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-10px) scale(1.2);
+            }
+        }
+
+        .card-decoration.top-left {
+            top: -15px;
+            left: -15px;
+        }
+
+        .card-decoration.top-right {
+            top: -15px;
+            right: -15px;
+        }
+
+        .card-decoration.bottom-left {
+            bottom: -15px;
+            left: -15px;
+        }
+
+        .card-decoration.bottom-right {
+            bottom: -15px;
+            right: -15px;
+        }
+
         @media (max-width: 768px) {
+            body {
+                background-size: 200% 200%;
+            }
+
+            .container {
+                padding: 10px;
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+
             h1 {
-                font-size: 2.5rem;
+                font-size: clamp(1.5rem, 8vw, 2.5rem);
+                margin-bottom: 15px;
+                line-height: 1.2;
+                padding: 0 5px;
             }
+            
             .greeting {
-                font-size: 1.4rem;
+                font-size: clamp(1rem, 5vw, 1.4rem);
+                margin-bottom: 15px;
             }
+            
             .name {
-                font-size: 1.6rem;
+                font-size: clamp(1.2rem, 6vw, 1.6rem);
+                display: inline-block;
             }
+            
             .message {
-                font-size: 1.1rem;
+                font-size: clamp(0.9rem, 4vw, 1.1rem);
+                line-height: 1.6;
+                margin: 15px 0;
+                padding: 0 5px;
             }
+            
             .question-final {
-                font-size: 1.4rem;
+                font-size: clamp(1rem, 5vw, 1.3rem);
+                margin: 20px 0;
+                padding: 0 5px;
             }
+            
             .card {
-                padding: 40px 25px;
-                margin: 20px;
-                border-radius: 30px;
+                padding: 25px 20px;
+                margin: 0;
+                border-radius: 25px;
+                max-width: 100%;
             }
+            
+            .buttons {
+                flex-direction: column;
+                gap: 15px;
+                margin-top: 25px;
+                width: 100%;
+            }
+            
             .btn {
-                padding: 15px 35px;
-                font-size: 1.2rem;
+                width: 100%;
+                padding: 18px 30px;
+                font-size: clamp(1rem, 4.5vw, 1.2rem);
+                min-height: 56px;
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
             }
-            .celebration-text {
-                font-size: 2.5rem;
+            
+            .celebration {
                 padding: 20px;
-                margin-bottom: 30px;
             }
+            
+            .celebration-text {
+                font-size: clamp(1.5rem, 8vw, 2.5rem);
+                padding: 15px 10px;
+                margin-bottom: 30px;
+                line-height: 1.3;
+            }
+            
             .close-btn {
-                padding: 12px 30px;
-                font-size: 1.1rem;
+                width: 100%;
+                max-width: 280px;
+                padding: 16px 30px;
+                font-size: clamp(0.95rem, 4vw, 1.1rem);
+                min-height: 52px;
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+            }
+            
+            .no-message {
+                font-size: clamp(0.9rem, 4vw, 1.1rem);
+                margin-top: 15px;
+                padding: 0 10px;
+            }
+
+            .rose-bouquet {
+                font-size: 40px;
+                opacity: 0.5;
+            }
+
+            .valentine-decoration {
+                font-size: 30px;
+                opacity: 0.4;
+            }
+
+            .card-decoration {
+                font-size: 20px;
             }
         }
 
         @media (max-width: 480px) {
-            h1 {
-                font-size: 2rem;
+            .container {
+                padding: 8px;
+                padding-top: 15px;
             }
+
             .card {
-                padding: 30px 20px;
+                padding: 20px 15px;
+                border-radius: 20px;
             }
+
+            h1 {
+                margin-bottom: 12px;
+            }
+            
+            .greeting {
+                margin-bottom: 12px;
+            }
+            
+            .message {
+                margin: 12px 0;
+            }
+            
+            .question-final {
+                margin: 15px 0;
+            }
+            
             .buttons {
-                flex-direction: column;
-                gap: 15px;
+                margin-top: 20px;
+                gap: 12px;
             }
+            
             .btn {
-                width: 100%;
+                padding: 16px 25px;
+                min-height: 54px;
+            }
+            
+            .celebration-text {
+                padding: 10px 8px;
+                margin-bottom: 25px;
+            }
+            
+            .close-btn {
+                padding: 14px 25px;
+                min-height: 50px;
+            }
+
+            .rose-bouquet {
+                font-size: 35px;
+                opacity: 0.4;
+            }
+
+            .valentine-decoration {
+                font-size: 25px;
+                opacity: 0.3;
+            }
+
+            .card-decoration {
+                font-size: 18px;
+            }
+
+            .falling-rose {
+                font-size: 20px;
+            }
+
+            .rose-petal {
+                width: 8px;
+                height: 8px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 5px;
+                padding-top: 10px;
+            }
+
+            .card {
+                padding: 18px 12px;
+            }
+
+            .buttons {
+                gap: 10px;
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .container {
+                padding-top: 10px;
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 20px 25px;
+            }
+
+            h1 {
+                font-size: clamp(1.3rem, 6vw, 2rem);
+                margin-bottom: 10px;
+            }
+
+            .message {
+                margin: 10px 0;
+            }
+
+            .buttons {
+                flex-direction: row;
+                gap: 12px;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        /* Touch device optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .btn {
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+            }
+            .btn:active {
+                transform: scale(0.98);
+            }
+            .btn-yes:active {
+                transform: translateY(-2px) scale(0.98);
             }
         }
     </style>
@@ -488,9 +867,27 @@
 
 <body>
     <div class="hearts" id="hearts"></div>
+    
+    <!-- Rose Bouquets -->
+    <div class="rose-bouquet left">🌹</div>
+    <div class="rose-bouquet right">🌹</div>
+    <div class="rose-bouquet bottom-left">🌹</div>
+    <div class="rose-bouquet bottom-right">🌹</div>
+    
+    <!-- Valentine Decorations -->
+    <div class="valentine-decoration cupid">💘</div>
+    <div class="valentine-decoration love-letter">💌</div>
+    <div class="valentine-decoration chocolate">🍫</div>
+    <div class="valentine-decoration ring">💍</div>
 
     <div class="container">
         <div class="card">
+            <!-- Card Decorations -->
+            <div class="card-decoration top-left">💖</div>
+            <div class="card-decoration top-right">💕</div>
+            <div class="card-decoration bottom-left">💝</div>
+            <div class="card-decoration bottom-right">💗</div>
+            
             <div class="card-content">
                 <h1>💕 Will You Be My Valentine? 💕</h1>
                 <p class="greeting">Dear <span class="name">Maryam</span>,</p>
@@ -546,6 +943,45 @@
         // Create hearts periodically
         setInterval(createHeart, 800);
 
+        // Create falling roses
+        function createFallingRose() {
+            const rose = document.createElement('div');
+            rose.className = 'falling-rose';
+            const roses = ['🌹', '🌺', '🌷', '🌻'];
+            rose.textContent = roses[Math.floor(Math.random() * roses.length)];
+            rose.style.left = Math.random() * 100 + '%';
+            rose.style.animationDuration = (Math.random() * 5 + 8) + 's';
+            rose.style.animationDelay = Math.random() * 2 + 's';
+            rose.style.fontSize = (Math.random() * 20 + 25) + 'px';
+            document.body.appendChild(rose);
+
+            setTimeout(() => {
+                rose.remove();
+            }, 15000);
+        }
+
+        // Create rose petals
+        function createRosePetal() {
+            const petal = document.createElement('div');
+            petal.className = 'rose-petal';
+            petal.style.left = Math.random() * 100 + '%';
+            petal.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            petal.style.animationDelay = Math.random() * 2 + 's';
+            petal.style.width = (Math.random() * 8 + 10) + 'px';
+            petal.style.height = petal.style.width;
+            document.body.appendChild(petal);
+
+            setTimeout(() => {
+                petal.remove();
+            }, 10000);
+        }
+
+        // Create falling roses periodically
+        setInterval(createFallingRose, 2000);
+        
+        // Create rose petals periodically
+        setInterval(createRosePetal, 1500);
+
         // Create confetti
         function createConfetti() {
             const colors = ['#ff69b4', '#ff1493', '#ff6347', '#ffa500', '#ffd700', '#ff69b4', '#667eea', '#764ba2'];
@@ -588,8 +1024,10 @@
         let noClickCount = 0;
         let isMoving = false;
 
-        yesBtn.addEventListener('click', (e) => {
-            createSparkle(e.clientX, e.clientY);
+            yesBtn.addEventListener('click', (e) => {
+            const x = e.clientX || (e.touches && e.touches[0]?.clientX) || window.innerWidth / 2;
+            const y = e.clientY || (e.touches && e.touches[0]?.clientY) || window.innerHeight / 2;
+            createSparkle(x, y);
             celebration.classList.add('show');
             createConfetti();
             
@@ -597,20 +1035,55 @@
             for (let i = 0; i < 80; i++) {
                 setTimeout(() => createHeart(), i * 80);
             }
+
+            // Create more roses and petals
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => createFallingRose(), i * 100);
+            }
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => createRosePetal(), i * 80);
+            }
+        });
+
+        // Touch support for Yes button
+        yesBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            createSparkle(touch.clientX, touch.clientY);
+            celebration.classList.add('show');
+            createConfetti();
+            
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => createHeart(), i * 80);
+            }
+
+            // Create more roses and petals
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => createFallingRose(), i * 100);
+            }
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => createRosePetal(), i * 80);
+            }
         });
 
         closeBtn.addEventListener('click', () => {
             celebration.classList.remove('show');
         });
 
-        // Make the No button move away when mouse approaches
+        closeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            celebration.classList.remove('show');
+        });
+
+        // Make the No button move away when mouse approaches (desktop)
         noBtn.addEventListener('mouseenter', () => {
             if (noClickCount >= 2 && !isMoving) {
                 moveButtonAway();
             }
         });
 
-        noBtn.addEventListener('click', (e) => {
+        // Handle No button click
+        function handleNoClick(e) {
             noClickCount++;
             
             if (noClickCount === 1) {
@@ -631,6 +1104,28 @@
                 noMessage.classList.add('show');
                 setTimeout(() => noMessage.classList.remove('show'), 2000);
             }
+        }
+
+        noBtn.addEventListener('click', handleNoClick);
+        
+        // Touch support for No button
+        let touchStartTime = 0;
+        noBtn.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
+            // On mobile, move button after 2 clicks
+            if (noClickCount >= 2 && !isMoving) {
+                e.preventDefault();
+                moveButtonAway();
+            }
+        });
+
+        noBtn.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            // Only trigger click if it was a quick tap (not a drag)
+            if (touchDuration < 300) {
+                e.preventDefault();
+                handleNoClick(e);
+            }
         });
 
         function moveButtonAway() {
@@ -644,28 +1139,32 @@
             const buttonY = rect.top + rect.height / 2;
             
             // Calculate safe distance (keep button visible and within bounds)
-            const maxX = window.innerWidth - rect.width - 20;
-            const maxY = window.innerHeight - rect.height - 20;
-            const minX = 20;
-            const minY = 20;
+            const padding = window.innerWidth < 480 ? 10 : 20;
+            const maxX = window.innerWidth - rect.width - padding;
+            const maxY = window.innerHeight - rect.height - padding;
+            const minX = padding;
+            const minY = padding;
             
             // Calculate new position (opposite side of screen)
             let newX, newY;
             
+            // On mobile, move less distance
+            const moveDistance = window.innerWidth < 480 ? 150 : 300;
+            
             if (buttonX < window.innerWidth / 2) {
                 // Button is on left, move to right
-                newX = Math.min(maxX, buttonX + Math.random() * 300 + 200);
+                newX = Math.min(maxX, buttonX + Math.random() * moveDistance + (moveDistance * 0.5));
             } else {
                 // Button is on right, move to left
-                newX = Math.max(minX, buttonX - Math.random() * 300 - 200);
+                newX = Math.max(minX, buttonX - Math.random() * moveDistance - (moveDistance * 0.5));
             }
             
             if (buttonY < window.innerHeight / 2) {
                 // Button is on top, move down
-                newY = Math.min(maxY, buttonY + Math.random() * 200 + 150);
+                newY = Math.min(maxY, buttonY + Math.random() * (moveDistance * 0.6) + (moveDistance * 0.4));
             } else {
                 // Button is on bottom, move up
-                newY = Math.max(minY, buttonY - Math.random() * 200 - 150);
+                newY = Math.max(minY, buttonY - Math.random() * (moveDistance * 0.6) - (moveDistance * 0.4));
             }
             
             // Ensure button stays within bounds
@@ -683,8 +1182,14 @@
             }, 600);
         }
 
-        // Also move button when mouse gets close
+        // Also move button when mouse gets close (desktop only)
+        let lastMouseMove = 0;
         document.addEventListener('mousemove', (e) => {
+            // Throttle mouse move events
+            const now = Date.now();
+            if (now - lastMouseMove < 50) return;
+            lastMouseMove = now;
+
             if (noClickCount >= 2 && !isMoving) {
                 const rect = noBtn.getBoundingClientRect();
                 const buttonCenterX = rect.left + rect.width / 2;
@@ -701,9 +1206,29 @@
             }
         });
 
+        // Prevent zoom on double tap (mobile)
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd < 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+
         // Initialize some hearts
         for (let i = 0; i < 15; i++) {
             setTimeout(() => createHeart(), i * 400);
+        }
+
+        // Initialize some falling roses
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => createFallingRose(), i * 1000);
+        }
+
+        // Initialize some rose petals
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => createRosePetal(), i * 800);
         }
 
         // Add sparkles on card hover
