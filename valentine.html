@@ -27,6 +27,8 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             touch-action: manipulation;
+            display: flex;
+            flex-direction: column;
         }
 
         @keyframes gradientShift {
@@ -38,12 +40,14 @@
         .container {
             position: relative;
             z-index: 10;
-            padding: 5vh 20px;
+            padding: 80px 20px 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            min-height: calc(100vh - 80px);
             min-height: -webkit-fill-available;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .card {
@@ -57,7 +61,7 @@
             padding: 60px 50px;
             max-width: 700px;
             width: 100%;
-            margin: 0 auto;
+            margin: 0;
             animation: fadeInUp 1s ease-out, cardGlow 3s ease-in-out infinite;
             position: relative;
             overflow: hidden;
@@ -112,6 +116,7 @@
             z-index: 1;
             width: 100%;
             max-width: 100%;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -300,16 +305,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            height: -webkit-fill-available;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             background: radial-gradient(circle, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
             z-index: 2000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            animation: celebrationFadeIn 0.5s ease-out;
             padding: 20px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            box-sizing: border-box;
         }
 
         @keyframes celebrationFadeIn {
@@ -322,7 +328,8 @@
         }
 
         .celebration.show {
-            display: flex;
+            display: flex !important;
+            animation: celebrationFadeIn 0.5s ease-out;
         }
 
         .celebration-text {
@@ -630,14 +637,17 @@
         @media (max-width: 768px) {
             body {
                 background-size: 200% 200%;
+                overflow-x: hidden;
             }
 
             .container {
-                padding: 10px;
-                min-height: 100vh;
+                padding: 70px 15px 20px;
+                min-height: calc(100vh - 70px);
                 min-height: -webkit-fill-available;
-                align-items: flex-start;
-                padding-top: 20px;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             h1 {
@@ -671,10 +681,12 @@
             }
             
             .card {
-                padding: 25px 20px;
+                padding: 30px 20px;
                 margin: 0;
                 border-radius: 25px;
                 max-width: 100%;
+                width: 100%;
+                box-sizing: border-box;
             }
             
             .buttons {
@@ -694,6 +706,12 @@
             
             .celebration {
                 padding: 20px;
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
+            }
+            
+            .celebration.show {
+                display: flex !important;
             }
             
             .celebration-text {
@@ -804,30 +822,69 @@
             }
         }
 
-        @media (max-width: 360px) {
+        @media (max-width: 480px) {
             .container {
-                padding: 5px;
-                padding-top: 10px;
+                padding: 70px 10px 15px;
+                align-items: center;
+                justify-content: center;
+                min-height: calc(100vh - 70px);
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .card {
-                padding: 18px 12px;
+                padding: 25px 18px;
+                margin: 0;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .celebration {
+                padding: 15px;
+            }
+
+            .celebration-text {
+                font-size: clamp(1.3rem, 7vw, 2rem);
+                padding: 10px 8px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 70px 8px 12px;
+                min-height: calc(100vh - 70px);
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .card {
+                padding: 20px 15px;
+                margin: 0;
+                width: 100%;
+                box-sizing: border-box;
             }
 
             .buttons {
                 gap: 10px;
+            }
+
+            .celebration {
+                padding: 10px;
             }
         }
 
         /* Landscape mobile */
         @media (max-width: 768px) and (orientation: landscape) {
             .container {
-                padding-top: 10px;
-                align-items: flex-start;
+                padding: 60px 15px 15px;
+                align-items: center;
+                min-height: calc(100vh - 60px);
             }
 
             .card {
-                padding: 20px 25px;
+                padding: 25px 30px;
+                max-width: 600px;
+                margin: 0;
             }
 
             h1 {
@@ -905,6 +962,16 @@
                 left: 15px;
                 padding: 10px 20px;
                 font-size: 0.9rem;
+                z-index: 2001;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .back-button {
+                top: 12px;
+                left: 12px;
+                padding: 8px 16px;
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -1074,6 +1141,7 @@
             const x = e.clientX || (e.touches && e.touches[0]?.clientX) || window.innerWidth / 2;
             const y = e.clientY || (e.touches && e.touches[0]?.clientY) || window.innerHeight / 2;
             createSparkle(x, y);
+            celebration.style.display = 'flex';
             celebration.classList.add('show');
             createConfetti();
             
@@ -1096,6 +1164,7 @@
             e.preventDefault();
             const touch = e.changedTouches[0];
             createSparkle(touch.clientX, touch.clientY);
+            celebration.style.display = 'flex';
             celebration.classList.add('show');
             createConfetti();
             
@@ -1112,13 +1181,40 @@
             }
         });
 
+        // Reset function to restore No button to original state
+        function resetNoButton() {
+            noClickCount = 0;
+            isMoving = false;
+            noBtn.style.position = '';
+            noBtn.style.left = '';
+            noBtn.style.top = '';
+            noBtn.style.zIndex = '';
+            noBtn.classList.remove('moving');
+            noMessage.classList.remove('show');
+            noMessage.textContent = "Are you sure? Think about it... 😊";
+            // Ensure celebration overlay is hidden
+            if (celebration) {
+                celebration.classList.remove('show');
+                celebration.style.display = 'none';
+            }
+        }
+
+        // Reset on page load to ensure clean state
+        window.addEventListener('load', () => {
+            resetNoButton();
+        });
+
         closeBtn.addEventListener('click', () => {
             celebration.classList.remove('show');
+            celebration.style.display = 'none';
+            resetNoButton();
         });
 
         closeBtn.addEventListener('touchend', (e) => {
             e.preventDefault();
             celebration.classList.remove('show');
+            celebration.style.display = 'none';
+            resetNoButton();
         });
 
         // Make the No button move away when mouse approaches (desktop)
