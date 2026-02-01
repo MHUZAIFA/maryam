@@ -44,7 +44,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 80px);
+            height: 100vh;
             min-height: -webkit-fill-available;
             width: 100%;
             box-sizing: border-box;
@@ -115,7 +115,8 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            max-width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
             box-sizing: border-box;
         }
 
@@ -680,10 +681,9 @@
                 padding: 0 5px;
             }
             
-            .card {
+            .card-content {
                 padding: 30px 20px;
                 margin: 0;
-                border-radius: 25px;
                 max-width: 100%;
                 width: 100%;
                 box-sizing: border-box;
@@ -757,9 +757,8 @@
                 padding-top: 15px;
             }
 
-            .card {
+            .card-content {
                 padding: 20px 15px;
-                border-radius: 20px;
             }
 
             h1 {
@@ -832,7 +831,7 @@
                 box-sizing: border-box;
             }
 
-            .card {
+            .card-content {
                 padding: 25px 18px;
                 margin: 0;
                 width: 100%;
@@ -857,7 +856,7 @@
                 box-sizing: border-box;
             }
 
-            .card {
+            .card-content {
                 padding: 20px 15px;
                 margin: 0;
                 width: 100%;
@@ -881,7 +880,7 @@
                 min-height: calc(100vh - 60px);
             }
 
-            .card {
+            .card-content {
                 padding: 25px 30px;
                 max-width: 600px;
                 margin: 0;
@@ -994,35 +993,27 @@
     <div class="valentine-decoration ring">💍</div>
 
     <div class="container">
-        <div class="card">
-            <!-- Card Decorations -->
-            <div class="card-decoration top-left">💖</div>
-            <div class="card-decoration top-right">💕</div>
-            <div class="card-decoration bottom-left">💝</div>
-            <div class="card-decoration bottom-right">💗</div>
+        <div class="card-content">
+            <h1>💕 Will You Be My Valentine? 💕</h1>
+            <p class="greeting">Dear <span class="name">Maryam</span>,</p>
+            <p class="message">
+                We met just after Valentine's Day last year, and now, almost a year later, this will be our first Valentine's Day together. 
+                Every day with you has been a gift, and I can't wait to celebrate this special day with the most amazing person I know.
+            </p>
+            <p class="question-final">
+                Will you be my Valentine? ❤️
+            </p>
             
-            <div class="card-content">
-                <h1>💕 Will You Be My Valentine? 💕</h1>
-                <p class="greeting">Dear <span class="name">Maryam</span>,</p>
-                <p class="message">
-                    We met just after Valentine's Day last year, and now, almost a year later, this will be our first Valentine's Day together. 
-                    Every day with you has been a gift, and I can't wait to celebrate this special day with the most amazing person I know.
-                </p>
-                <p class="question-final">
-                    Will you be my Valentine? ❤️
-                </p>
-                
-                <div class="buttons">
-                    <button class="btn btn-yes" id="yesBtn">
-                        <span>Yes! 💖</span>
-                    </button>
-                    <button class="btn btn-no" id="noBtn">
-                        <span>No</span>
-                    </button>
-                </div>
-                
-                <p class="no-message" id="noMessage">Are you sure? Think about it... 😊</p>
+            <div class="buttons">
+                <button class="btn btn-yes" id="yesBtn">
+                    <span>Yes! 💖</span>
+                </button>
+                <button class="btn btn-no" id="noBtn">
+                    <span>No</span>
+                </button>
             </div>
+            
+            <p class="no-message" id="noMessage">Are you sure? Think about it... 😊</p>
         </div>
     </div>
 
@@ -1374,11 +1365,11 @@
             setTimeout(() => createRosePetal(), i * 800);
         }
 
-        // Add sparkles on card hover
-        const card = document.querySelector('.card');
-        card.addEventListener('mousemove', (e) => {
+        // Add sparkles on content hover
+        const cardContent = document.querySelector('.card-content');
+        cardContent.addEventListener('mousemove', (e) => {
             if (Math.random() > 0.95) {
-                const rect = card.getBoundingClientRect();
+                const rect = cardContent.getBoundingClientRect();
                 createSparkle(e.clientX - rect.left, e.clientY - rect.top);
             }
         });
