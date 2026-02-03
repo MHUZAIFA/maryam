@@ -119,6 +119,7 @@
             transition: all 0.3s ease;
             text-decoration: none;
             font-family: 'Poppins', sans-serif;
+            z-index: 1000;
         }
 
         .logout-btn:hover {
@@ -555,7 +556,7 @@
 
     <div class="container">
         <div class="header">
-            <button class="logout-btn" onclick="Auth.logout()" title="Logout">Logout</button>
+            <button class="logout-btn" id="logoutBtn" title="Logout">Logout</button>
             <h1>For the Love of My Life, Maryam</h1>
             <p class="subtitle">Every moment with you is a gift I treasure</p>
         </div>
@@ -651,6 +652,33 @@
     <script>
         // Protect this page - redirect to login if not authenticated
         Auth.protectPage();
+        
+        // Add logout button event listener
+        function setupLogoutButton() {
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.Auth && window.Auth.logout) {
+                        window.Auth.logout();
+                    } else {
+                        // Fallback if Auth is not available
+                        localStorage.removeItem('authToken');
+                        localStorage.removeItem('authTime');
+                        sessionStorage.clear();
+                        window.location.href = 'login.html';
+                    }
+                });
+            }
+        }
+        
+        // Try to setup immediately if DOM is ready, otherwise wait
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupLogoutButton);
+        } else {
+            setupLogoutButton();
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"

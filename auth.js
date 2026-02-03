@@ -26,9 +26,18 @@
 
     // Logout function
     function logout() {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('authTime');
-        window.location.href = 'login.html';
+        try {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authTime');
+            // Clear any session storage as well
+            sessionStorage.clear();
+            // Redirect to login page
+            window.location.href = 'login.html';
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Force redirect even if there's an error
+            window.location.href = 'login.html';
+        }
     }
 
     // Protect page - redirect to login if not authenticated
