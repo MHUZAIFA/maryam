@@ -871,7 +871,10 @@
             animation: fadeIn 0.6s ease-out 0.2s both;
             flex-shrink: 0;
             width: 100%;
-            max-width: 600px;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .fullscreen-song-title {
@@ -887,9 +890,52 @@
         .fullscreen-song-artist {
             font-size: 20px;
             color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 0;
+            margin-bottom: 8px;
             font-weight: 500;
             letter-spacing: 0.3px;
+        }
+
+        .fullscreen-lyrics-link {
+            font-size: 14px;
+            color: #ff6b9d;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+            position: relative;
+        }
+
+        .fullscreen-lyrics-link:hover {
+            color: #ff8fb3;
+            transform: translateX(4px);
+        }
+
+        .fullscreen-lyrics-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #ff6b9d;
+            transition: width 0.3s ease;
+        }
+
+        .fullscreen-lyrics-link:hover::after {
+            background: #ff8fb3;
+            width: 100%;
+        }
+
+        .fullscreen-lyrics-link.active {
+            color: #ff6b9d;
+        }
+
+        .fullscreen-lyrics-link.active::after {
+            width: 100%;
+            background: #ff6b9d;
         }
 
         .fullscreen-progress {
@@ -897,6 +943,7 @@
             margin-bottom: 0;
             flex-shrink: 0;
             max-width: 360px;
+            width: 360px;
         }
 
         .fullscreen-progress-bar {
@@ -957,27 +1004,29 @@
         }
 
         .fullscreen-back-btn {
-            position: absolute;
-            left: -80px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+            position: fixed;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
+            width: 44px;
+            height: 44px;
             align-items: center;
             justify-content: center;
             color: rgba(255, 255, 255, 0.9);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 14px;
-            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            font-size: 18px;
+            z-index: 1003;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
         }
 
         .fullscreen-back-btn:hover {
             background: rgba(255, 107, 157, 0.2);
             border-color: rgba(255, 107, 157, 0.4);
-            transform: scale(1.1) translateX(-3px);
+            transform: translateX(-3px) scale(1.05);
             color: #ff6b9d;
         }
 
@@ -1011,8 +1060,8 @@
             align-items: center;
             gap: 12px;
             margin-top: 16px;
-            width: 100%;
-            max-width: 320px;
+            width: 360px;
+            max-width: 360px;
             padding: 8px 16px;
         }
 
@@ -1182,7 +1231,6 @@
             white-space: pre-line;
             flex: 1;
             overflow-y: auto;
-            padding-right: 24px;
             font-weight: 400;
             letter-spacing: 0.2px;
         }
@@ -1225,53 +1273,360 @@
             margin-bottom: 12px;
         }
 
+        /* Lyrics View Mode */
+        .fullscreen-player.lyrics-mode {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-content {
+            grid-template-columns: 1fr;
+            padding: 0;
+            gap: 0;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            align-items: stretch;
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-left {
+            display: none;
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-right {
+            padding: 0;
+            height: 100vh;
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-lyrics {
+            flex: 1;
+            padding: 80px 40px 200px;
+            overflow-y: auto;
+            height: 100vh;
+            max-height: 100vh;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .fullscreen-player.lyrics-mode .lyrics-content {
+            font-size: 32px;
+            line-height: 2.4;
+            text-align: center;
+        }
+
+        .fullscreen-player.lyrics-mode .lyrics-title {
+            font-size: 14px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-player-controls-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            z-index: 1002;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            min-height: auto;
+        }
+
+
+        .fullscreen-player.lyrics-mode .fullscreen-close {
+            display: none;
+        }
+
+        .fullscreen-player-controls-bottom {
+            display: none;
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-player-controls-bottom {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            position: relative;
+            align-items: center;
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-back-btn {
+            display: flex;
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            z-index: 1003;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .fullscreen-player.lyrics-mode .fullscreen-back-btn:hover {
+            background: rgba(255, 107, 157, 0.2);
+            border-color: rgba(255, 107, 157, 0.4);
+            transform: translateX(-3px) scale(1.05);
+            color: #ff6b9d;
+        }
+
+
+        .fullscreen-player-controls-bottom .song-info-mini {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            min-width: 0;
+            flex: 0 0 auto;
+        }
+
+        .fullscreen-player-controls-bottom .song-info-mini img,
+        .fullscreen-player-controls-bottom .song-info-mini #lyricsViewAlbumArt {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .fullscreen-player-controls-bottom .song-info-mini-text {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 150px;
+        }
+
+        .fullscreen-player-controls-bottom .song-info-mini-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+
+        .fullscreen-player-controls-bottom .song-info-mini-artist {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+            margin-top: 2px;
+        }
+
+        .fullscreen-player-controls-bottom .progress-section-mini {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fullscreen-player-controls-bottom .time-display-mini {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            min-width: 32px;
+            text-align: center;
+            flex-shrink: 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .fullscreen-player-controls-bottom .progress-bar-wrapper-mini {
+            flex: 1;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+            min-width: 0;
+        }
+
+        .fullscreen-player-controls-bottom .progress-bar-fill-mini {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b9d, #ff8fb3);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .fullscreen-player-controls-bottom .control-buttons-mini {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .fullscreen-player-controls-bottom .control-btn-mini {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-player-controls-bottom .control-btn-mini:hover {
+            color: #ffffff;
+            transform: scale(1.15);
+        }
+
+        .fullscreen-player-controls-bottom .control-btn-mini.play-pause {
+            width: 36px;
+            height: 36px;
+            background: #ffffff;
+            color: #000000;
+            border-radius: 50%;
+            font-size: 12px;
+        }
+
+        .fullscreen-player-controls-bottom .control-btn-mini.play-pause:hover {
+            background: #ff6b9d;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .fullscreen-player-controls-bottom .control-btn-mini.small {
+            font-size: 14px;
+            width: 28px;
+            height: 28px;
+            opacity: 0.8;
+        }
+
+        .fullscreen-player-controls-bottom .control-btn-mini.small:hover {
+            opacity: 1;
+        }
+
+        .fullscreen-player-controls-bottom .control-btn-mini.medium {
+            font-size: 16px;
+            width: 28px;
+            height: 28px;
+        }
+
+
         @media (max-width: 1024px) {
+            /* Tablet Fullscreen Player Animations */
+            .fullscreen-player {
+                animation: mobileFullscreenSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .fullscreen-player.active {
+                animation: mobileFullscreenSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
             .fullscreen-content {
                 grid-template-columns: 1fr;
-                gap: 40px;
-                padding: 30px 20px;
+                gap: 30px;
+                padding: 20px 16px;
                 height: 100vh;
+                overflow-y: auto;
+                animation: mobileFullscreenFadeScale 0.4s ease-out 0.1s both;
             }
 
             .fullscreen-left {
                 padding: 10px;
+                order: 1;
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
             }
 
             .fullscreen-right {
                 padding: 10px;
                 padding-left: 10px;
+                order: 2;
+                display: none; /* Hide lyrics by default on mobile */
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
             }
 
             .fullscreen-album-art {
-                width: 450px;
-                height: 450px;
-                max-height: 40vh;
+                width: min(450px, 70vw);
+                height: min(450px, 70vw);
+                max-height: 50vh;
+                animation: mobileFullscreenScaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
             }
 
             .fullscreen-left {
                 align-items: center;
-                gap: 24px;
+                gap: 20px;
             }
 
             .fullscreen-song-info {
                 text-align: center;
-            }
-
-            .fullscreen-progress {
-                max-width: 450px;
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+                max-width: min(450px, 70vw);
             }
 
             .fullscreen-song-title {
-                font-size: 22px;
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.45s both;
+            }
+
+            .fullscreen-song-artist {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+            }
+
+            .fullscreen-progress {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.55s both;
+                max-width: min(450px, 70vw);
+                width: min(450px, 70vw);
+            }
+
+            .fullscreen-controls {
+                width: min(450px, 70vw);
+                max-width: min(450px, 70vw);
+            }
+
+            .fullscreen-volume-control {
+                width: min(450px, 70vw);
+                max-width: min(450px, 70vw);
+            }
+
+            .fullscreen-controls {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+            }
+
+            .fullscreen-volume-control {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.7s both;
+            }
+
+            .fullscreen-song-title {
+                font-size: 24px;
             }
 
             .fullscreen-song-artist {
                 font-size: 16px;
             }
 
+            .fullscreen-lyrics-link {
+                font-size: 12px;
+                margin-top: 6px;
+            }
+
             .fullscreen-controls {
                 justify-content: center;
-                gap: 16px;
+                gap: 12px;
+                flex-wrap: wrap;
             }
 
             .fullscreen-volume-control {
@@ -1306,26 +1661,211 @@
             .lyrics-line:hover {
                 transform: translateX(0);
             }
+
+            /* Lyrics view mode on mobile */
+            .fullscreen-player.lyrics-mode .fullscreen-content {
+                height: 100vh;
+                max-height: 100vh;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-right {
+                height: 100vh;
+                max-height: 100vh;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-lyrics {
+                padding: 60px 20px 180px;
+                height: 100vh;
+                max-height: 100vh;
+            }
+
+            .fullscreen-player.lyrics-mode .lyrics-content {
+                font-size: 24px;
+                line-height: 2.2;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-back-btn {
+                top: 16px;
+                left: 16px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-player-controls-bottom {
+                padding: 10px 16px;
+                animation: mobileFullscreenSlideInBottom 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+            }
+
+            .fullscreen-player-controls-bottom .song-info-mini-text {
+                max-width: 120px;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-back-btn {
+                animation: mobileFullscreenSlideInTop 0.4s ease-out 0.1s both;
+            }
+
+            .fullscreen-player-controls-bottom .song-info-mini-title {
+                font-size: 12px;
+            }
+
+            .fullscreen-player-controls-bottom .song-info-mini-artist {
+                font-size: 10px;
+            }
         }
 
         @media (max-width: 768px) {
+            /* Mobile Fullscreen Player Animations */
+            .fullscreen-player {
+                animation: mobileFullscreenSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-player.active {
+                animation: mobileFullscreenSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: auto;
+            }
+
+            .fullscreen-overlay {
+                animation: mobileFadeIn 0.4s ease-out;
+                will-change: opacity;
+            }
+
+            .fullscreen-close {
+                animation: mobileFullscreenSlideInTop 0.4s ease-out 0.2s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-back-btn {
+                animation: mobileFullscreenSlideInTop 0.4s ease-out 0.2s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-content {
+                padding: 16px 12px;
+                animation: mobileFullscreenFadeScale 0.4s ease-out 0.1s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-left {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-right {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+                will-change: transform, opacity;
+            }
+
             .fullscreen-album-art {
-                width: 280px;
-                height: 280px;
+                width: min(280px, 80vw);
+                height: min(280px, 80vw);
+                animation: mobileFullscreenScaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-song-info {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-lyrics-link {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.55s both;
             }
 
             .fullscreen-progress {
-                max-width: 280px;
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-controls {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.6s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-volume-control {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.7s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-lyrics {
+                animation: mobileFullscreenFadeScale 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+                will-change: transform, opacity;
+            }
+
+            /* Lyrics View Mode Mobile Animations */
+            .fullscreen-player.lyrics-mode {
+                animation: mobileFullscreenSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-content {
+                animation: mobileFullscreenFadeScale 0.3s ease-out both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-right {
+                animation: mobileFullscreenFadeScale 0.4s ease-out 0.1s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-lyrics {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-back-btn {
+                animation: mobileFullscreenSlideInTop 0.4s ease-out 0.1s both;
+                will-change: transform, opacity;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-player-controls-bottom {
+                animation: mobileFullscreenSlideInBottom 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+                will-change: transform, opacity;
+            }
+
+            /* Reset will-change after animation completes */
+            .fullscreen-player.active * {
+                animation-fill-mode: both;
+            }
+
+            .fullscreen-progress {
+                max-width: min(280px, 80vw);
+                width: min(280px, 80vw);
+            }
+
+            .fullscreen-controls {
+                width: min(280px, 80vw);
+                max-width: min(280px, 80vw);
+            }
+
+            .fullscreen-volume-control {
+                width: min(280px, 80vw);
+                max-width: min(280px, 80vw);
+            }
+
+            .fullscreen-song-info {
+                max-width: min(280px, 80vw);
             }
 
             .fullscreen-song-title {
                 font-size: 20px;
                 letter-spacing: -0.5px;
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.45s both;
+            }
+
+            .fullscreen-song-artist {
+                animation: mobileFullscreenSlideInBottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
             }
 
             .fullscreen-song-artist {
                 font-size: 14px;
                 letter-spacing: 0.2px;
+            }
+
+            .fullscreen-lyrics-link {
+                font-size: 11px;
+                margin-top: 4px;
             }
 
             .fullscreen-control-btn {
@@ -1345,12 +1885,12 @@
             }
 
             .lyrics-content {
-                font-size: 21px;
+                font-size: 20px;
                 line-height: 2;
             }
 
             .lyrics-line {
-                margin-bottom: 20px;
+                margin-bottom: 16px;
             }
 
             .lyrics-line.active {
@@ -1363,6 +1903,112 @@
 
             .lyrics-line:hover {
                 transform: translateX(0);
+            }
+
+            /* Lyrics view mode on small mobile */
+            .fullscreen-player.lyrics-mode .fullscreen-content {
+                height: 100vh;
+                max-height: 100vh;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-right {
+                height: 100vh;
+                max-height: 100vh;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-lyrics {
+                padding: 50px 16px 60px;
+                height: 100vh;
+                max-height: 100vh;
+            }
+
+            .fullscreen-player.lyrics-mode .lyrics-content {
+                font-size: 22px;
+                line-height: 2;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-back-btn {
+                top: 24px;
+                left: 24px;
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .fullscreen-player.lyrics-mode .fullscreen-player-controls-bottom {
+                padding: 8px 12px;
+                animation: mobileFullscreenSlideInBottom 0.35s cubic-bezier(0.4, 0, 0.2, 1) 0.25s both;
+            }
+
+            .fullscreen-player-controls-bottom .song-info-mini img,
+            .fullscreen-player-controls-bottom .song-info-mini #lyricsViewAlbumArt {
+                width: 36px;
+                height: 36px;
+            }
+
+            /* Mobile Touch Interactions */
+            .fullscreen-control-btn:active,
+            .fullscreen-back-btn:active,
+            .fullscreen-close:active,
+            .control-btn-mini:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+
+            .fullscreen-control-btn.play-pause:active {
+                transform: scale(0.9);
+            }
+
+            /* Smooth transitions for mobile */
+            .fullscreen-player * {
+                -webkit-tap-highlight-color: transparent;
+                tap-highlight-color: transparent;
+            }
+
+            /* Optimize animations for mobile performance */
+            .fullscreen-player,
+            .fullscreen-content,
+            .fullscreen-left,
+            .fullscreen-right,
+            .fullscreen-album-art,
+            .fullscreen-song-info,
+            .fullscreen-controls {
+                transform: translateZ(0);
+                backface-visibility: hidden;
+                perspective: 1000px;
+            }
+
+            .fullscreen-player-controls-bottom .song-info-mini-text {
+                max-width: 100px;
+            }
+
+            .fullscreen-player-controls-bottom .song-info-mini-title {
+                font-size: 11px;
+            }
+
+            .fullscreen-player-controls-bottom .song-info-mini-artist {
+                font-size: 9px;
+            }
+
+            .fullscreen-player-controls-bottom .control-btn-mini.play-pause {
+                width: 32px;
+                height: 32px;
+                font-size: 11px;
+            }
+
+            .fullscreen-player-controls-bottom .control-btn-mini.small {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+
+            .fullscreen-player-controls-bottom .time-display-mini {
+                font-size: 9px;
+                min-width: 28px;
+            }
+
+            .fullscreen-player-controls-bottom .progress-bar-wrapper-mini {
+                height: 2px;
             }
         }
 
@@ -1905,6 +2551,73 @@
             }
             to {
                 opacity: 1;
+            }
+        }
+
+        /* Mobile Fullscreen Player Animations */
+        @keyframes mobileFullscreenSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes mobileFullscreenFadeScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes mobileFullscreenSlideInBottom {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes mobileFullscreenSlideInTop {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes mobileFullscreenScaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes mobileFullscreenBackdrop {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(20px);
             }
         }
 
@@ -2599,6 +3312,9 @@
         <button class="fullscreen-close" id="closeFullscreen">
             <i class="fas fa-times"></i>
         </button>
+        <button class="fullscreen-back-btn" id="fullscreenBackBtn" title="Back">
+            <i class="fas fa-arrow-left"></i>
+        </button>
         <div class="fullscreen-content">
             <div class="fullscreen-left">
                 <div class="fullscreen-album-art" id="fullscreenAlbumArt">
@@ -2608,6 +3324,7 @@
                 <div class="fullscreen-song-info">
                     <div class="fullscreen-song-title" id="fullscreenTitle">Select a song</div>
                     <div class="fullscreen-song-artist" id="fullscreenArtist"></div>
+                    <div class="fullscreen-lyrics-link" id="fullscreenLyricsLink">Lyrics</div>
                 </div>
                 <div class="fullscreen-progress">
                     <div class="fullscreen-progress-bar" id="fullscreenProgressContainer">
@@ -2647,6 +3364,37 @@
                         Select a song to view lyrics
                     </div>
                 </div>
+            </div>
+        </div>
+        <!-- Lyrics View Bottom Controls -->
+        <div class="fullscreen-player-controls-bottom">
+            <div class="song-info-mini">
+                <div id="lyricsViewAlbumArt" style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; overflow: hidden;">
+                    <i class="fas fa-music" style="font-size: 18px; color: rgba(255, 255, 255, 0.5);"></i>
+                    <img id="lyricsViewAlbumImage" src="" alt="" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 6px; position: absolute; top: 0; left: 0;">
+                </div>
+                <div class="song-info-mini-text">
+                    <div class="song-info-mini-title" id="lyricsViewTitle">Select a song</div>
+                    <div class="song-info-mini-artist" id="lyricsViewArtist"></div>
+                </div>
+            </div>
+            <div class="progress-section-mini">
+                <span class="time-display-mini" id="lyricsViewCurrentTime">0:00</span>
+                <div class="progress-bar-wrapper-mini" id="lyricsViewProgressContainer">
+                    <div class="progress-bar-fill-mini" id="lyricsViewProgressBar"></div>
+                </div>
+                <span class="time-display-mini" id="lyricsViewDuration">0:00</span>
+            </div>
+            <div class="control-buttons-mini">
+                <button class="control-btn-mini small" id="lyricsViewPrevBtn" title="Previous">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn-mini play-pause" id="lyricsViewPlayBtn" title="Play/Pause">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn-mini small" id="lyricsViewNextBtn" title="Next">
+                    <i class="fas fa-step-forward"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -3628,7 +4376,12 @@
 
         function closeFullscreenPlayer() {
             const fullscreenPlayer = document.getElementById('fullscreenPlayer');
+            const fullscreenLyricsLink = document.getElementById('fullscreenLyricsLink');
             fullscreenPlayer.classList.remove('active');
+            fullscreenPlayer.classList.remove('lyrics-mode');
+            if (fullscreenLyricsLink) {
+                fullscreenLyricsLink.classList.remove('active');
+            }
             document.body.style.overflow = '';
             saveState(); // Save fullscreen state
         }
@@ -3691,7 +4444,128 @@
                         lyricsContent.innerHTML = '<div class="lyrics-line" style="opacity: 0.5; text-align: center; font-style: italic;">Lyrics not available</div>';
                     }
                 }
+                
+                // Update lyrics view controls
+                updateLyricsViewControls();
             }
+        }
+
+        function toggleLyricsView() {
+            const fullscreenPlayer = document.getElementById('fullscreenPlayer');
+            const fullscreenLyricsLink = document.getElementById('fullscreenLyricsLink');
+            if (!fullscreenPlayer.classList.contains('active')) {
+                // Open fullscreen player first if not open
+                openFullscreenPlayer();
+                setTimeout(() => {
+                    fullscreenPlayer.classList.add('lyrics-mode');
+                    if (fullscreenLyricsLink) {
+                        fullscreenLyricsLink.classList.add('active');
+                    }
+                    updateLyricsViewControls();
+                }, 100);
+            } else {
+                fullscreenPlayer.classList.add('lyrics-mode');
+                if (fullscreenLyricsLink) {
+                    fullscreenLyricsLink.classList.add('active');
+                }
+                updateLyricsViewControls();
+            }
+        }
+
+        function exitLyricsView() {
+            const fullscreenPlayer = document.getElementById('fullscreenPlayer');
+            const fullscreenLyricsLink = document.getElementById('fullscreenLyricsLink');
+            fullscreenPlayer.classList.remove('lyrics-mode');
+            if (fullscreenLyricsLink) {
+                fullscreenLyricsLink.classList.remove('active');
+            }
+        }
+
+        function updateLyricsViewControls() {
+            if (currentSongIndex >= 0 && currentSongIndex < allSongs.length) {
+                const song = allSongs[currentSongIndex];
+                document.getElementById('lyricsViewTitle').textContent = song.title;
+                document.getElementById('lyricsViewArtist').textContent = song.artist;
+                
+                // Update album art
+                const lyricsViewAlbumArt = document.getElementById('lyricsViewAlbumArt');
+                const lyricsViewAlbumImage = document.getElementById('lyricsViewAlbumImage');
+                const icon = lyricsViewAlbumArt.querySelector('i');
+                if (song.albumCover) {
+                    lyricsViewAlbumImage.src = song.albumCover;
+                    lyricsViewAlbumImage.style.display = 'block';
+                    lyricsViewAlbumArt.style.position = 'relative';
+                    if (icon) icon.style.display = 'none';
+                } else {
+                    lyricsViewAlbumImage.style.display = 'none';
+                    lyricsViewAlbumArt.style.position = 'relative';
+                    if (icon) icon.style.display = 'flex';
+                }
+            }
+        }
+
+        function setupLyricsViewProgressBar() {
+            const progressContainer = document.getElementById('lyricsViewProgressContainer');
+            const progressBar = document.getElementById('lyricsViewProgressBar');
+            let isDragging = false;
+
+            progressContainer.addEventListener('mousedown', (e) => {
+                if (!audio.duration) return;
+                isDragging = true;
+                progressContainer.classList.add('dragging');
+                updateProgressFromEvent(e, progressContainer, progressBar);
+            });
+
+            progressContainer.addEventListener('mousemove', (e) => {
+                if (isDragging && audio.duration) {
+                    updateProgressFromEvent(e, progressContainer, progressBar);
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    progressContainer.classList.remove('dragging');
+                }
+            });
+
+            // Touch support
+            progressContainer.addEventListener('touchstart', (e) => {
+                if (!audio.duration) return;
+                isDragging = true;
+                progressContainer.classList.add('dragging');
+                updateProgressFromTouch(e, progressContainer, progressBar);
+            }, { passive: true });
+
+            progressContainer.addEventListener('touchmove', (e) => {
+                if (isDragging && audio.duration) {
+                    updateProgressFromTouch(e, progressContainer, progressBar);
+                }
+            }, { passive: true });
+
+            progressContainer.addEventListener('touchend', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    progressContainer.classList.remove('dragging');
+                }
+            }, { passive: true });
+        }
+
+        function updateProgressFromEvent(e, container, progressBar) {
+            const rect = container.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            const newTime = percent * audio.duration;
+            audio.currentTime = newTime;
+            progressBar.style.width = (percent * 100) + '%';
+        }
+
+        function updateProgressFromTouch(e, container, progressBar) {
+            const touch = e.touches[0];
+            const rect = container.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+            const newTime = percent * audio.duration;
+            audio.currentTime = newTime;
+            progressBar.style.width = (percent * 100) + '%';
         }
 
         function setupEventListeners() {
@@ -3705,10 +4579,22 @@
             // Close fullscreen player
             document.getElementById('closeFullscreen').addEventListener('click', closeFullscreenPlayer);
             
+            // Lyrics view toggle
+            const fullscreenLyricsLink = document.getElementById('fullscreenLyricsLink');
+            if (fullscreenLyricsLink) {
+                fullscreenLyricsLink.addEventListener('click', toggleLyricsView);
+            }
+            document.getElementById('fullscreenBackBtn').addEventListener('click', exitLyricsView);
+            
             // Close on escape key
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    closeFullscreenPlayer();
+                    const fullscreenPlayer = document.getElementById('fullscreenPlayer');
+                    if (fullscreenPlayer.classList.contains('lyrics-mode')) {
+                        exitLyricsView();
+                    } else {
+                        closeFullscreenPlayer();
+                    }
                 }
             });
 
@@ -3716,6 +4602,22 @@
             document.getElementById('fullscreenPlayBtn').addEventListener('click', togglePlay);
             document.getElementById('fullscreenNextBtn').addEventListener('click', () => playNext());
             document.getElementById('fullscreenPrevBtn').addEventListener('click', () => playPrevious());
+            
+            // Lyrics view controls
+            document.getElementById('lyricsViewPlayBtn').addEventListener('click', togglePlay);
+            document.getElementById('lyricsViewNextBtn').addEventListener('click', () => playNext());
+            document.getElementById('lyricsViewPrevBtn').addEventListener('click', () => playPrevious());
+            const lyricsViewShuffleBtn = document.getElementById('lyricsViewShuffleBtn');
+            if (lyricsViewShuffleBtn) {
+                lyricsViewShuffleBtn.addEventListener('click', toggleShuffle);
+            }
+            const lyricsViewRepeatBtn = document.getElementById('lyricsViewRepeatBtn');
+            if (lyricsViewRepeatBtn) {
+                lyricsViewRepeatBtn.addEventListener('click', toggleRepeat);
+            }
+            
+            // Lyrics view progress bar
+            setupLyricsViewProgressBar();
             
             // Shuffle buttons
             document.getElementById('shuffleBtn').addEventListener('click', toggleShuffle);
@@ -4027,6 +4929,7 @@
             function updateRepeatButton() {
                 const repeatBtn = document.getElementById('repeatBtn');
                 const fullscreenRepeatBtn = document.getElementById('fullscreenRepeatBtn');
+                const lyricsViewRepeatBtn = document.getElementById('lyricsViewRepeatBtn');
                 
                 let iconClass = '';
                 let title = '';
@@ -4047,51 +4950,39 @@
                     showBadge = true;
                 }
                 
-                if (repeatBtn) {
+                const updateButton = (btn) => {
+                    if (!btn) return;
                     if (showBadge) {
-                        repeatBtn.innerHTML = `<i class="${iconClass}"></i><span style="position: absolute; top: -2px; right: -2px; font-size: 10px; font-weight: 900; color: #ff6b9d; background: rgba(0, 0, 0, 0.8); border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; line-height: 1;">1</span>`;
+                        btn.innerHTML = `<i class="${iconClass}"></i><span style="position: absolute; top: -2px; right: -2px; font-size: 10px; font-weight: 900; color: #ff6b9d; background: rgba(0, 0, 0, 0.8); border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; line-height: 1;">1</span>`;
                     } else {
-                        repeatBtn.innerHTML = `<i class="${iconClass}"></i>`;
+                        btn.innerHTML = `<i class="${iconClass}"></i>`;
                     }
-                    repeatBtn.title = title;
-                    repeatBtn.style.position = 'relative';
+                    btn.title = title;
+                    btn.style.position = 'relative';
                     if (repeatMode === 1) {
-                        repeatBtn.style.opacity = '0.5';
-                        repeatBtn.style.color = '';
+                        btn.style.opacity = '0.5';
+                        btn.style.color = '';
                     } else {
-                        repeatBtn.style.opacity = '1';
+                        btn.style.opacity = '1';
                     }
                     if (repeatMode === 2) {
-                        repeatBtn.style.color = '#ff6b9d';
+                        btn.style.color = '#ff6b9d';
                     } else if (repeatMode === 0) {
-                        repeatBtn.style.color = '';
+                        btn.style.color = '';
                     }
-                }
+                };
                 
-                if (fullscreenRepeatBtn) {
-                    if (showBadge) {
-                        fullscreenRepeatBtn.innerHTML = `<i class="${iconClass}"></i><span style="position: absolute; top: -2px; right: -2px; font-size: 10px; font-weight: 900; color: #ff6b9d; background: rgba(0, 0, 0, 0.8); border-radius: 50%; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; line-height: 1;">1</span>`;
-                    } else {
-                        fullscreenRepeatBtn.innerHTML = `<i class="${iconClass}"></i>`;
-                    }
-                    fullscreenRepeatBtn.title = title;
-                    fullscreenRepeatBtn.style.position = 'relative';
-                    if (repeatMode === 1) {
-                        fullscreenRepeatBtn.style.opacity = '0.5';
-                        fullscreenRepeatBtn.style.color = '';
-                    } else {
-                        fullscreenRepeatBtn.style.opacity = '1';
-                    }
-                    if (repeatMode === 2) {
-                        fullscreenRepeatBtn.style.color = '#ff6b9d';
-                    } else if (repeatMode === 0) {
-                        fullscreenRepeatBtn.style.color = '';
-                    }
-                }
+                updateButton(repeatBtn);
+                updateButton(fullscreenRepeatBtn);
+                updateButton(lyricsViewRepeatBtn);
             }
 
             document.getElementById('repeatBtn').addEventListener('click', toggleRepeat);
             document.getElementById('fullscreenRepeatBtn').addEventListener('click', toggleRepeat);
+            const lyricsViewRepeatBtnEl = document.getElementById('lyricsViewRepeatBtn');
+            if (lyricsViewRepeatBtnEl) {
+                lyricsViewRepeatBtnEl.addEventListener('click', toggleRepeat);
+            }
             
             // Initialize repeat button
             updateRepeatButton();
@@ -4150,11 +5041,16 @@
                 isPlaying = true;
                 const playBtn = document.getElementById('playBtn');
                 const fullscreenPlayBtn = document.getElementById('fullscreenPlayBtn');
+                const lyricsViewPlayBtn = document.getElementById('lyricsViewPlayBtn');
                 playBtn.innerHTML = '<i class="fas fa-pause"></i>';
                 playBtn.classList.add('playing');
                 if (fullscreenPlayBtn) {
                     fullscreenPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
                     fullscreenPlayBtn.classList.add('playing');
+                }
+                if (lyricsViewPlayBtn) {
+                    lyricsViewPlayBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    lyricsViewPlayBtn.classList.add('playing');
                 }
                 
                 // Mobile animation enhancements
@@ -4176,11 +5072,16 @@
                 isPlaying = false;
                 const playBtn = document.getElementById('playBtn');
                 const fullscreenPlayBtn = document.getElementById('fullscreenPlayBtn');
+                const lyricsViewPlayBtn = document.getElementById('lyricsViewPlayBtn');
                 playBtn.innerHTML = '<i class="fas fa-play"></i>';
                 playBtn.classList.remove('playing');
                 if (fullscreenPlayBtn) {
                     fullscreenPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
                     fullscreenPlayBtn.classList.remove('playing');
+                }
+                if (lyricsViewPlayBtn) {
+                    lyricsViewPlayBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    lyricsViewPlayBtn.classList.remove('playing');
                 }
                 
                 // Mobile animation enhancements
@@ -4388,34 +5289,30 @@
         function updateShuffleButton() {
             const shuffleBtn = document.getElementById('shuffleBtn');
             const fullscreenShuffleBtn = document.getElementById('fullscreenShuffleBtn');
+            const lyricsViewShuffleBtn = document.getElementById('lyricsViewShuffleBtn');
             const shuffleHeaderBtn = document.getElementById('shuffleHeaderBtn');
             
-            if (isShuffleEnabled) {
-                if (shuffleBtn) {
-                    shuffleBtn.style.color = '#ff6b9d';
-                    shuffleBtn.style.opacity = '1';
-                    shuffleBtn.classList.add('active');
+            const updateButton = (btn) => {
+                if (!btn) return;
+                if (isShuffleEnabled) {
+                    btn.style.color = '#ff6b9d';
+                    btn.style.opacity = '1';
+                    btn.classList.add('active');
+                } else {
+                    btn.style.color = '';
+                    btn.style.opacity = '';
+                    btn.classList.remove('active');
                 }
-                if (fullscreenShuffleBtn) {
-                    fullscreenShuffleBtn.style.color = '#ff6b9d';
-                    fullscreenShuffleBtn.style.opacity = '1';
-                    fullscreenShuffleBtn.classList.add('active');
-                }
-                if (shuffleHeaderBtn) {
+            };
+            
+            updateButton(shuffleBtn);
+            updateButton(fullscreenShuffleBtn);
+            updateButton(lyricsViewShuffleBtn);
+            
+            if (shuffleHeaderBtn) {
+                if (isShuffleEnabled) {
                     shuffleHeaderBtn.classList.add('active');
-                }
-            } else {
-                if (shuffleBtn) {
-                    shuffleBtn.style.color = '';
-                    shuffleBtn.style.opacity = '';
-                    shuffleBtn.classList.remove('active');
-                }
-                if (fullscreenShuffleBtn) {
-                    fullscreenShuffleBtn.style.color = '';
-                    fullscreenShuffleBtn.style.opacity = '';
-                    fullscreenShuffleBtn.classList.remove('active');
-                }
-                if (shuffleHeaderBtn) {
+                } else {
                     shuffleHeaderBtn.classList.remove('active');
                 }
             }
@@ -4431,6 +5328,11 @@
                     fullscreenProgressBar.style.width = percent + '%';
                 }
                 
+                const lyricsViewProgressBar = document.getElementById('lyricsViewProgressBar');
+                if (lyricsViewProgressBar) {
+                    lyricsViewProgressBar.style.width = percent + '%';
+                }
+                
                 const minutes = Math.floor(audio.currentTime / 60);
                 const seconds = Math.floor(audio.currentTime % 60);
                 const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -4439,6 +5341,11 @@
                 const fullscreenCurrentTime = document.getElementById('fullscreenCurrentTime');
                 if (fullscreenCurrentTime) {
                     fullscreenCurrentTime.textContent = timeString;
+                }
+                
+                const lyricsViewCurrentTime = document.getElementById('lyricsViewCurrentTime');
+                if (lyricsViewCurrentTime) {
+                    lyricsViewCurrentTime.textContent = timeString;
                 }
             }
         }
@@ -4453,6 +5360,11 @@
                 const fullscreenDuration = document.getElementById('fullscreenDuration');
                 if (fullscreenDuration) {
                     fullscreenDuration.textContent = durationString;
+                }
+                
+                const lyricsViewDuration = document.getElementById('lyricsViewDuration');
+                if (lyricsViewDuration) {
+                    lyricsViewDuration.textContent = durationString;
                 }
             }
         }
