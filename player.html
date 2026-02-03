@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player - Period Mix ❤️</title>
+    <title>MH Station - Music Player ❤️</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -117,12 +117,20 @@
             backdrop-filter: blur(10px);
             padding: 16px 32px;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
             animation: slideInRight 0.5s ease-out;
+        }
+
+        .player-brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-right: 24px;
+            letter-spacing: 0.5px;
         }
 
         .main-tabs {
@@ -282,7 +290,12 @@
             width: 100%;
             height: 100%;
             gap: 2px;
-            animation: fadeIn 0.6s ease-out;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .album-collage.fading {
+            opacity: 0;
         }
 
         .album-collage-item {
@@ -1454,22 +1467,25 @@
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .playlist-list:not(.no-animate) .playlist-item {
             opacity: 0;
             animation: slideInRight 0.4s ease-out forwards;
             transform: translateX(-20px);
         }
 
-        .playlist-item:nth-child(1) { animation-delay: 0.05s; }
-        .playlist-item:nth-child(2) { animation-delay: 0.1s; }
-        .playlist-item:nth-child(3) { animation-delay: 0.15s; }
-        .playlist-item:nth-child(4) { animation-delay: 0.2s; }
-        .playlist-item:nth-child(5) { animation-delay: 0.25s; }
-        .playlist-item:nth-child(6) { animation-delay: 0.3s; }
-        .playlist-item:nth-child(7) { animation-delay: 0.35s; }
-        .playlist-item:nth-child(8) { animation-delay: 0.4s; }
-        .playlist-item:nth-child(9) { animation-delay: 0.45s; }
-        .playlist-item:nth-child(10) { animation-delay: 0.5s; }
-        .playlist-item:nth-child(n+11) { animation-delay: 0.55s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(1) { animation-delay: 0.05s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(2) { animation-delay: 0.1s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(3) { animation-delay: 0.15s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(4) { animation-delay: 0.2s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(5) { animation-delay: 0.25s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(6) { animation-delay: 0.3s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(7) { animation-delay: 0.35s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(8) { animation-delay: 0.4s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(9) { animation-delay: 0.45s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(10) { animation-delay: 0.5s; }
+        .playlist-list:not(.no-animate) .playlist-item:nth-child(n+11) { animation-delay: 0.55s; }
 
         .playlist-item:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -1660,16 +1676,13 @@
 <body>
     <div class="main-container">
         <div class="top-bar">
-            <div class="main-tabs">
-                <div class="main-tab active" data-tab="you-and-me">You and Me</div>
-                <div class="main-tab" data-tab="period-mix">Period Mix</div>
-                <div class="main-tab" data-tab="valentine">💕 Valentine</div>
-            </div>
-            <div class="user-profile">
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+            <div style="display: flex; align-items: center;">
+                <div class="player-brand">MH Station</div>
+                <div class="main-tabs">
+                    <div class="main-tab active" data-tab="you-and-me">You and Me</div>
+                    <div class="main-tab" data-tab="period-mix">Period Mix</div>
+                    <div class="main-tab" data-tab="valentine">💕 Valentine</div>
                 </div>
-                <span>Maryam</span>
             </div>
         </div>
 
@@ -1968,10 +1981,14 @@
             }
         ];
 
-        // Separate songs by tab
+        // Separate songs by tab based on folder paths
         const periodMixSongs = songs.filter(song => song.src.includes('period_mix'));
-        const youAndMeSongs = songs.filter(song => !song.src.includes('period_mix'));
-        const valentineSongs = songs.filter(song => song.period === 'romantic');
+        const valentineSongs = songs.filter(song => song.src.includes('valentine') || song.src.includes('/valentine/'));
+        const youAndMeSongs = songs.filter(song => 
+            song.src.includes('you-and-me') || 
+            song.src.includes('/you-and-me/') ||
+            (!song.src.includes('period_mix') && !song.src.includes('valentine') && !song.src.includes('/valentine/'))
+        );
         const allSongs = [...songs]; // Combined array for playback continuity
 
         let currentSongIndex = 0;
@@ -2324,14 +2341,32 @@
                 tabSongs = valentineSongs;
             }
             
+            // Handle empty playlists
+            if (tabSongs.length === 0) {
+                const existingCollage = albumArt.querySelector('.album-collage');
+                if (existingCollage) {
+                    existingCollage.classList.add('fading');
+                    setTimeout(() => {
+                        if (existingCollage.parentNode) {
+                            existingCollage.remove();
+                        }
+                        const icon = albumArt.querySelector('i');
+                        if (icon) icon.style.display = 'flex';
+                        albumArt.classList.remove('show-collage');
+                    }, 300);
+                } else {
+                    const icon = albumArt.querySelector('i');
+                    if (icon) icon.style.display = 'flex';
+                    albumArt.classList.remove('show-collage');
+                }
+                return;
+            }
+            
             // Get top 4 songs with album covers
             const songsWithCovers = tabSongs.filter(s => s.albumCover).slice(0, 4);
             
-            // Clear existing collage
+            // Get existing collage
             const existingCollage = albumArt.querySelector('.album-collage');
-            if (existingCollage) {
-                existingCollage.remove();
-            }
             
             // Hide single image and icon
             albumImage.style.display = 'none';
@@ -2340,10 +2375,16 @@
             albumArt.classList.remove('has-image');
             albumArt.classList.add('show-collage');
             
+            // Create new collage first (before removing old one)
             if (songsWithCovers.length > 0) {
-                // Create collage
                 const collage = document.createElement('div');
                 collage.className = 'album-collage';
+                collage.style.opacity = '0'; // Start invisible
+                collage.style.position = 'absolute';
+                collage.style.top = '0';
+                collage.style.left = '0';
+                collage.style.width = '100%';
+                collage.style.height = '100%';
                 
                 // Fill with 4 items (pad with empty if needed)
                 for (let i = 0; i < 4; i++) {
@@ -2371,10 +2412,42 @@
                     collage.appendChild(item);
                 }
                 
+                // Add new collage first
                 albumArt.appendChild(collage);
+                
+                // Fade out old collage, then fade in new one
+                if (existingCollage) {
+                    existingCollage.classList.add('fading');
+                    setTimeout(() => {
+                        if (existingCollage.parentNode) {
+                            existingCollage.remove();
+                        }
+                        // Fade in new collage after old one is removed
+                        setTimeout(() => {
+                            collage.style.position = '';
+                            collage.style.opacity = '1';
+                        }, 50);
+                    }, 300);
+                } else {
+                    // No existing collage, just fade in
+                    setTimeout(() => {
+                        collage.style.position = '';
+                        collage.style.opacity = '1';
+                    }, 10);
+                }
             } else {
-                // Show icon if no covers available
-                if (icon) icon.style.display = 'flex';
+                // No covers available - remove existing and show icon
+                if (existingCollage) {
+                    existingCollage.classList.add('fading');
+                    setTimeout(() => {
+                        if (existingCollage.parentNode) {
+                            existingCollage.remove();
+                        }
+                        if (icon) icon.style.display = 'flex';
+                    }, 300);
+                } else {
+                    if (icon) icon.style.display = 'flex';
+                }
             }
         }
 
@@ -2518,10 +2591,23 @@
 
         function renderPlaylist() {
             const playlist = document.getElementById('playlist');
+            const wasAnimated = playlist.classList.contains('no-animate');
             playlist.innerHTML = '';
+            if (!wasAnimated) {
+                playlist.classList.remove('no-animate');
+            }
 
             // Show Period Mix songs
             filteredSongs = periodMixSongs;
+
+            // Show empty state if no songs
+            if (filteredSongs.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.style.cssText = 'padding: 40px; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 14px;';
+                emptyMessage.textContent = 'No songs in Period Mix yet';
+                playlist.appendChild(emptyMessage);
+                return;
+            }
 
             filteredSongs.forEach((song, index) => {
                 const item = document.createElement('div');
@@ -2562,11 +2648,22 @@
                 });
                 playlist.appendChild(item);
             });
+            
+            // Mark as animated after first render, prevent animations on subsequent renders
+            if (!wasAnimated) {
+                setTimeout(() => {
+                    playlist.classList.add('no-animate');
+                }, 600);
+            }
         }
 
         function renderYouAndMePlaylist() {
             const playlist = document.getElementById('you-and-me-playlist');
+            const wasAnimated = playlist.classList.contains('no-animate');
             playlist.innerHTML = '';
+            if (!wasAnimated) {
+                playlist.classList.remove('no-animate');
+            }
 
             // Show "You and Me" songs
             youAndMeSongs.forEach((song, index) => {
@@ -2607,13 +2704,33 @@
                 });
                 playlist.appendChild(item);
             });
+            
+            // Mark as animated after first render, prevent animations on subsequent renders
+            if (!wasAnimated) {
+                setTimeout(() => {
+                    playlist.classList.add('no-animate');
+                }, 600);
+            }
         }
 
         function renderValentinePlaylist() {
             const playlist = document.getElementById('valentine-playlist');
+            const wasAnimated = playlist.classList.contains('no-animate');
             playlist.innerHTML = '';
+            if (!wasAnimated) {
+                playlist.classList.remove('no-animate');
+            }
 
-            // Show Valentine (romantic) songs
+            // Show empty state if no songs
+            if (valentineSongs.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.style.cssText = 'padding: 40px; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 14px;';
+                emptyMessage.textContent = 'No songs in Valentine yet. Add songs to the valentine folder.';
+                playlist.appendChild(emptyMessage);
+                return;
+            }
+
+            // Show Valentine songs
             valentineSongs.forEach((song, index) => {
                 const item = document.createElement('div');
                 item.className = 'playlist-item';
@@ -2652,6 +2769,13 @@
                 });
                 playlist.appendChild(item);
             });
+            
+            // Mark as animated after first render, prevent animations on subsequent renders
+            if (!wasAnimated) {
+                setTimeout(() => {
+                    playlist.classList.add('no-animate');
+                }, 600);
+            }
         }
 
         function openFullscreenPlayer() {
@@ -2821,14 +2945,16 @@
                         renderValentinePlaylist();
                     }
                     
-                    // Update title and show collage if no song is playing
+                    // Always update header title and collage when switching tabs
+                    document.getElementById('currentTitle').textContent = tabName;
+                    document.getElementById('currentArtist').textContent = '';
+                    // Only update mini player title if no song is playing
                     if (!isPlaying && !audio.src) {
-                        document.getElementById('currentTitle').textContent = tabName;
                         document.getElementById('miniTitle').textContent = tabName;
-                        document.getElementById('currentArtist').textContent = '';
                         document.getElementById('miniArtist').textContent = '';
-                        showTabCollage(tabType);
                     }
+                    // Always update collage/header image when switching tabs
+                    showTabCollage(tabType);
                 });
             });
 
@@ -2981,13 +3107,8 @@
                     fullscreenPlayBtn.classList.add('playing');
                 }
                 saveState(); // Save play state
-                renderPlaylist();
-                if (document.getElementById('you-and-me-section').style.display !== 'none') {
-                    renderYouAndMePlaylist();
-                }
-                if (document.getElementById('valentine-section').style.display !== 'none') {
-                    renderValentinePlaylist();
-                }
+                // Only update playing state, don't re-render entire playlist
+                updatePlaylistPlayingState();
             });
 
             audio.addEventListener('pause', () => {
@@ -3001,12 +3122,51 @@
                     fullscreenPlayBtn.classList.remove('playing');
                 }
                 saveState(); // Save pause state
-                renderPlaylist();
-                if (document.getElementById('you-and-me-section').style.display !== 'none') {
-                    renderYouAndMePlaylist();
-                }
-                if (document.getElementById('valentine-section').style.display !== 'none') {
-                    renderValentinePlaylist();
+                // Only update playing state, don't re-render entire playlist
+                updatePlaylistPlayingState();
+            });
+        }
+
+        function updatePlaylistPlayingState() {
+            // Update all playlist items without re-rendering
+            const allPlaylistItems = document.querySelectorAll('.playlist-item');
+            allPlaylistItems.forEach((item, itemIndex) => {
+                // Get the song index from the item's data attribute or by finding the song
+                const itemText = item.querySelector('.playlist-item-title')?.textContent;
+                const itemArtist = item.querySelector('.playlist-item-artist')?.textContent;
+                
+                if (itemText && itemArtist) {
+                    const songIndex = allSongs.findIndex(s => s.title === itemText && s.artist === itemArtist);
+                    const isCurrentlyPlaying = songIndex === currentSongIndex && isPlaying;
+                    
+                    // Update playing state
+                    if (isCurrentlyPlaying) {
+                        item.classList.add('playing');
+                        // Update playing indicator
+                        const numberDiv = item.querySelector('.playlist-item-number');
+                        if (numberDiv && !numberDiv.querySelector('.playing-indicator')) {
+                            const currentNumber = numberDiv.querySelector('span')?.textContent || '';
+                            numberDiv.innerHTML = `
+                                <div class="playing-indicator">
+                                    <div class="equalizer-bars">
+                                        <div class="equalizer-bar"></div>
+                                        <div class="equalizer-bar"></div>
+                                        <div class="equalizer-bar"></div>
+                                        <div class="equalizer-bar"></div>
+                                    </div>
+                                </div>
+                                <span>${currentNumber}</span>
+                            `;
+                        }
+                    } else {
+                        item.classList.remove('playing');
+                        // Remove playing indicator if exists
+                        const numberDiv = item.querySelector('.playlist-item-number');
+                        if (numberDiv && numberDiv.querySelector('.playing-indicator')) {
+                            const currentNumber = numberDiv.querySelector('span')?.textContent || '';
+                            numberDiv.innerHTML = `<span>${currentNumber}</span>`;
+                        }
+                    }
                 }
             });
         }
@@ -3052,13 +3212,8 @@
             updateFullscreenPlayer(); // Update fullscreen player if open
             
             audio.play();
-            renderPlaylist();
-            if (document.getElementById('you-and-me-section').style.display !== 'none') {
-                renderYouAndMePlaylist();
-            }
-            if (document.getElementById('valentine-section').style.display !== 'none') {
-                renderValentinePlaylist();
-            }
+            // Only update playing state, don't re-render entire playlist
+            updatePlaylistPlayingState();
         }
 
         function togglePlay() {
