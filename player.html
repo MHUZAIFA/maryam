@@ -3380,6 +3380,11 @@
 
         init();
     </script>
+    <script src="auth.js"></script>
+    <script>
+        // Protect this page - redirect to login if not authenticated
+        Auth.protectPage();
+    </script>
 </body>
 
 </html>

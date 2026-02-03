@@ -1739,5 +1739,10 @@
         // Initial resize
         window.dispatchEvent(new Event('resize'));
     </script>
+    <script src="auth.js"></script>
+    <script>
+        // Protect this page - redirect to login if not authenticated
+        Auth.protectPage();
+    </script>
 </body>
 </html>
