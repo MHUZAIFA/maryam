@@ -497,6 +497,18 @@
             border-radius: 2px;
             cursor: pointer;
             position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .progress-bar-wrapper.dragging {
+            cursor: grabbing;
+        }
+
+        .progress-bar-wrapper.dragging .progress-bar-fill {
+            height: 6px;
+            margin-top: -1px;
         }
 
         .progress-bar-wrapper:hover {
@@ -818,6 +830,18 @@
             margin-bottom: 12px;
             position: relative;
             transition: height 0.2s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        .fullscreen-progress-bar.dragging {
+            cursor: grabbing;
+            height: 8px;
+        }
+
+        .fullscreen-progress-bar.dragging .fullscreen-progress-fill {
+            height: 8px;
         }
 
         .fullscreen-progress-bar:hover {
@@ -3247,12 +3271,111 @@
                 updateVolumeIcon(parseInt(value));
             });
             
-            // Fullscreen progress bar
-            document.getElementById('fullscreenProgressContainer').addEventListener('click', (e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                audio.currentTime = percent * audio.duration;
-            });
+            // Function to handle progress bar seeking (click and drag)
+            function setupProgressBarDrag(containerId) {
+                const container = document.getElementById(containerId);
+                let isDragging = false;
+                let wasPlayingBeforeDrag = false;
+
+                function seekToPosition(e) {
+                    const rect = container.getBoundingClientRect();
+                    const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+                    const percent = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+                    
+                    if (audio.duration) {
+                        audio.currentTime = percent * audio.duration;
+                        // Manually update progress bar visual
+                        const progressBar = document.getElementById('progressBar');
+                        const fullscreenProgressBar = document.getElementById('fullscreenProgressBar');
+                        if (progressBar) {
+                            progressBar.style.width = (percent * 100) + '%';
+                        }
+                        if (fullscreenProgressBar) {
+                            fullscreenProgressBar.style.width = (percent * 100) + '%';
+                        }
+                        // Update time display
+                        const minutes = Math.floor(audio.currentTime / 60);
+                        const seconds = Math.floor(audio.currentTime % 60);
+                        const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        const currentTimeElement = document.getElementById('currentTime');
+                        const fullscreenCurrentTime = document.getElementById('fullscreenCurrentTime');
+                        if (currentTimeElement) {
+                            currentTimeElement.textContent = timeString;
+                        }
+                        if (fullscreenCurrentTime) {
+                            fullscreenCurrentTime.textContent = timeString;
+                        }
+                    }
+                }
+
+                // Mouse events
+                container.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    container.classList.add('dragging');
+                    wasPlayingBeforeDrag = !audio.paused;
+                    if (wasPlayingBeforeDrag) {
+                        audio.pause();
+                    }
+                    seekToPosition(e);
+                    e.preventDefault();
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (isDragging) {
+                        seekToPosition(e);
+                    }
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        container.classList.remove('dragging');
+                        if (wasPlayingBeforeDrag) {
+                            audio.play();
+                        }
+                    }
+                    isDragging = false;
+                });
+
+                // Touch events for mobile
+                container.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    container.classList.add('dragging');
+                    wasPlayingBeforeDrag = !audio.paused;
+                    if (wasPlayingBeforeDrag) {
+                        audio.pause();
+                    }
+                    seekToPosition(e);
+                    e.preventDefault();
+                });
+
+                document.addEventListener('touchmove', (e) => {
+                    if (isDragging) {
+                        seekToPosition(e);
+                        e.preventDefault();
+                    }
+                });
+
+                document.addEventListener('touchend', () => {
+                    if (isDragging) {
+                        container.classList.remove('dragging');
+                        if (wasPlayingBeforeDrag) {
+                            audio.play();
+                        }
+                    }
+                    isDragging = false;
+                });
+
+                // Click fallback (for when not dragging)
+                container.addEventListener('click', (e) => {
+                    if (!isDragging) {
+                        seekToPosition(e);
+                    }
+                });
+            }
+
+            // Setup drag for both progress bars
+            setupProgressBarDrag('progressContainer');
+            setupProgressBarDrag('fullscreenProgressContainer');
 
             // Main tabs (Period Mix / You and Me)
             document.querySelectorAll('.main-tab').forEach(tab => {
@@ -3382,11 +3505,7 @@
             // Initialize shuffle button
             updateShuffleButton();
 
-            document.getElementById('progressContainer').addEventListener('click', (e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                audio.currentTime = percent * audio.duration;
-            });
+            // Progress bar drag is handled by setupProgressBarDrag function above
 
             document.getElementById('volumeSlider').addEventListener('input', (e) => {
                 const value = e.target.value;
