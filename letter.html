@@ -22,6 +22,7 @@
             min-height: 100vh;
             min-height: -webkit-fill-available;
             overflow-x: hidden;
+            overflow-y: auto;
             font-family: 'Dancing Script', cursive;
             position: relative;
             -webkit-font-smoothing: antialiased;
@@ -29,7 +30,7 @@
             touch-action: manipulation;
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 0;
         }
 
         @keyframes gradientShift {
@@ -41,47 +42,25 @@
         .container {
             position: relative;
             z-index: 10;
-            padding: 80px 20px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
+            padding: 100px 20px 80px;
             width: 100%;
             box-sizing: border-box;
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
+            animation: fadeInUp 1s ease-out;
+            overflow: visible;
+            min-height: 100vh;
         }
 
         .letter-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 30px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4),
-                        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-            padding: 60px 50px;
             width: 100%;
+            max-width: 100%;
             margin: 0;
-            animation: fadeInUp 1s ease-out;
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             word-wrap: break-word;
             overflow-wrap: break-word;
             box-sizing: border-box;
-        }
-
-        .letter-container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-            animation: rotate 30s linear infinite;
-            pointer-events: none;
         }
 
         @keyframes rotate {
@@ -104,74 +83,264 @@
             position: relative;
             z-index: 1;
             width: 100%;
+            max-width: 100%;
             box-sizing: border-box;
-        }
-
-        .letter-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .letter-title {
-            font-size: 3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #ffd700 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 15px;
-            text-shadow: 0 0 30px rgba(255, 107, 157, 0.3);
-            animation: textShimmer 3s ease-in-out infinite;
-            font-family: 'Dancing Script', cursive;
-        }
-
-        @keyframes textShimmer {
-            0%, 100% {
-                filter: brightness(1);
-            }
-            50% {
-                filter: brightness(1.2);
-            }
-        }
-
-        .letter-date {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.7);
-            font-family: 'Poppins', sans-serif;
-            font-style: italic;
-        }
-
-        .letter-body {
-            font-size: 1.5rem;
-            color: rgba(255, 255, 255, 0.95);
-            line-height: 2;
-            font-weight: 400;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            min-height: 400px;
-            padding: 20px 0;
-        }
-
-        .typewriter-text {
-            white-space: pre-wrap;
+            padding: 0;
             word-wrap: break-word;
             overflow-wrap: break-word;
         }
 
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            height: 1.5rem;
-            background: rgba(255, 255, 255, 0.9);
-            margin-left: 4px;
-            animation: blink 1s infinite;
-            vertical-align: middle;
+        .letter-header {
+            text-align: center;
+            margin-bottom: 80px;
+            padding: 50px 20px 50px;
+            position: relative;
+            overflow: visible;
         }
 
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        /* Cute floating hearts around header */
+        .header-heart {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.6;
+            animation: floatHeart 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes floatHeart {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+                opacity: 0.4;
+            }
+            25% {
+                transform: translateY(-15px) translateX(10px) rotate(90deg) scale(1.1);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(-10px) translateX(-10px) rotate(180deg) scale(0.9);
+                opacity: 0.6;
+            }
+            75% {
+                transform: translateY(-20px) translateX(5px) rotate(270deg) scale(1.05);
+                opacity: 0.7;
+            }
+        }
+
+        /* Decorative elements around header */
+        .header-decoration {
+            position: absolute;
+            font-size: 1.8rem;
+            opacity: 0.5;
+            animation: rotate 15s linear infinite;
+            pointer-events: none;
+        }
+
+        .header-decoration.top-left {
+            top: -20px;
+            left: -30px;
+            content: '💝';
+        }
+
+        .header-decoration.top-right {
+            top: -20px;
+            right: -30px;
+            content: '💝';
+        }
+
+        .header-decoration.bottom-left {
+            bottom: -20px;
+            left: -30px;
+            content: '💝';
+        }
+
+        .header-decoration.bottom-right {
+            bottom: -20px;
+            right: -30px;
+            content: '💝';
+        }
+
+        /* Cute divider with hearts - Valentine themed */
+        .letter-header::after {
+            content: '💝 💕 💖 💗 💝 💕 💖 💗';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.3rem;
+            letter-spacing: 10px;
+            opacity: 0.8;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        .letter-title {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #ff6b9d;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.8), 0 0 60px rgba(255, 107, 157, 0.4);
+            animation: textShimmer 3s ease-in-out infinite, bounce 4s ease-in-out infinite;
+            font-family: 'Dancing Script', cursive;
+            letter-spacing: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            display: inline-block;
+            padding: 0 40px;
+        }
+
+        .letter-title:hover {
+            transform: scale(1.1);
+            color: #ff8fb3;
+            text-shadow: 0 0 40px rgba(255, 107, 157, 1), 0 0 80px rgba(255, 107, 157, 0.6);
+        }
+
+        .letter-title::before {
+            content: '💝';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            animation: heartBeat 1.5s ease-in-out infinite;
+            opacity: 0.8;
+        }
+
+        .letter-title::after {
+            content: '💝';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            animation: heartBeat 1.5s ease-in-out infinite 0.75s;
+            opacity: 0.8;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% {
+                transform: translateY(-50%) scale(1);
+            }
+            25% {
+                transform: translateY(-50%) scale(1.2);
+            }
+            50% {
+                transform: translateY(-50%) scale(1);
+            }
+            75% {
+                transform: translateY(-50%) scale(1.15);
+            }
+        }
+
+        @keyframes textShimmer {
+            0%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 30px rgba(255, 107, 157, 0.8), 0 0 60px rgba(255, 107, 157, 0.4);
+            }
+            50% {
+                opacity: 0.9;
+                text-shadow: 0 0 40px rgba(255, 107, 157, 1), 0 0 80px rgba(255, 107, 157, 0.6);
+            }
+        }
+
+        .letter-date {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-family: 'Poppins', sans-serif;
+            font-style: italic;
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 2;
+            margin-top: 20px;
+            display: inline-block;
+            animation: gentleFloat 3s ease-in-out infinite;
+            text-shadow: 0 2px 10px rgba(255, 182, 193, 0.5);
+        }
+
+        .letter-date::before {
+            content: '💝';
+            margin-right: 10px;
+            font-style: normal;
+            animation: heartBeat 2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .letter-date::after {
+            content: '💝';
+            margin-left: 10px;
+            font-style: normal;
+            animation: heartBeat 2s ease-in-out infinite 1s;
+            display: inline-block;
+        }
+
+        .letter-body {
+            font-size: 1.6rem;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 2.2;
+            font-weight: 400;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+            min-height: 100vh;
+            padding: 30px 0;
+            max-width: 100%;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 2;
+            visibility: visible;
+            opacity: 1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+        }
+
+        #letterBody {
+        }
+
+        .letter-line {
+            display: block;
+            opacity: 0;
+            transform: translateY(30px);
+            margin-bottom: 2rem;
+            min-height: 2.2em;
+            color: rgba(255, 255, 255, 0.95);
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.4);
+            white-space: normal;
+            overflow: visible;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .letter-line.typing {
+            opacity: 1;
+            transform: translateY(0);
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .letter-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+            white-space: normal;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .letter-line:first-child {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            white-space: normal !important;
+        }
+
+        .letter-line .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.5em;
+            background: rgba(255, 255, 255, 0.9);
+            margin-left: 3px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
         }
 
         .music-control {
@@ -305,6 +474,11 @@
             color: rgba(255, 182, 193, 0.6);
             animation: float 15s infinite;
             text-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
+            transition: transform 0.2s ease;
+        }
+
+        .heart:hover {
+            transform: scale(1.5);
         }
 
         @keyframes float {
@@ -325,19 +499,306 @@
         }
 
         .letter-signature {
-            margin-top: 40px;
+            margin-top: 60px;
+            margin-bottom: 20px;
             text-align: right;
-            font-size: 1.8rem;
+            font-size: 1.9rem;
             color: rgba(255, 255, 255, 0.9);
             font-style: italic;
-            padding-top: 20px;
-            border-top: 2px solid rgba(255, 255, 255, 0.2);
+            padding-top: 30px;
+            padding-bottom: 20px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        .letter-signature.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .letter-signature::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         }
 
         .signature-name {
             color: #ffd700;
             font-weight: 700;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            font-size: 2.2rem;
+            margin-top: 10px;
+            display: block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Sparkles animation */
+        .sparkles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 16px;
+            animation: sparkleFloat 8s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes sparkleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) scale(1);
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px) rotate(360deg) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Cute decorative elements */
+        .cute-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .cute-emoji {
+            position: absolute;
+            font-size: 24px;
+            animation: cuteFloat 12s ease-in-out infinite;
+            opacity: 0;
+            filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.6));
+        }
+
+        @keyframes cuteFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(30vh) translateX(20px) rotate(180deg) scale(1);
+                opacity: 0.9;
+            }
+            85% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) translateX(-20px) rotate(360deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* Decorative corner elements */
+        .letter-content::before,
+        .letter-content::after {
+            content: '✨';
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.6;
+            animation: rotate 20s linear infinite;
+            z-index: 0;
+        }
+
+        .letter-content::before {
+            top: -20px;
+            left: -30px;
+        }
+
+        .letter-content::after {
+            bottom: -20px;
+            right: -30px;
+        }
+
+        @media (max-width: 768px) {
+            .letter-content::before,
+            .letter-content::after {
+                display: none;
+            }
+
+            .letter-container::before,
+            .letter-container::after {
+                display: none;
+            }
+
+            .love-emoji {
+                display: none;
+            }
+        }
+
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Floating date */
+        .letter-date {
+            animation: gentleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        /* Sparkle effect on hover for signature */
+        .letter-signature:hover .signature-name {
+            animation: pulse 0.5s ease-in-out infinite, sparkleGlow 1s ease-in-out infinite;
+        }
+
+        @keyframes sparkleGlow {
+            0%, 100% {
+                text-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(255, 215, 0, 0.9), 0 0 60px rgba(255, 182, 193, 0.5);
+            }
+        }
+
+        /* Cute decorative dots */
+            .letter-header::before,
+            .letter-header::after {
+                display: none;
+            }
+
+        /* Animated border glow */
+        .letter-body {
+            position: relative;
+        }
+
+        .letter-body::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -20px;
+            right: -20px;
+            bottom: -10px;
+            background: linear-gradient(45deg, rgba(255, 107, 157, 0.1), rgba(255, 215, 0, 0.1), rgba(255, 107, 157, 0.1));
+            border-radius: 20px;
+            z-index: -1;
+            animation: borderGlow 4s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(1.02);
+            }
+        }
+
+        /* Cute corner decorations */
+        .letter-container::before,
+        .letter-container::after {
+            content: '💝';
+            position: absolute;
+            font-size: 1.8rem;
+            opacity: 0.4;
+            animation: rotate 15s linear infinite;
+            z-index: 0;
+        }
+
+        .letter-container::before {
+            top: 0;
+            left: 0;
+        }
+
+        .letter-container::after {
+            bottom: 0;
+            right: 0;
+        }
+
+        /* Floating love emojis */
+        .love-emoji {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.5;
+            animation: loveFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes loveFloat {
+            0%, 100% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-20px) translateX(10px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(-10px) translateX(-10px) rotate(180deg);
+            }
+            75% {
+                transform: translateY(-30px) translateX(5px) rotate(270deg);
+            }
+        }
+
+        /* Cute emoji decorations around text */
+            .letter-body::after {
+                display: none;
+            }
+
+        @keyframes floatAround {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-15px) rotate(90deg);
+            }
+            50% {
+                transform: translateY(0) rotate(180deg);
+            }
+            75% {
+                transform: translateY(15px) rotate(270deg);
+            }
         }
 
         @media (max-width: 768px) {
@@ -346,30 +807,73 @@
             }
 
             .container {
-                padding: 70px 15px 20px;
+                padding: 80px 15px 60px;
             }
 
-            .letter-container {
-                padding: 40px 30px;
+            .letter-header {
+                margin-bottom: 50px;
+                padding: 40px 15px 40px;
+            }
+
+            .header-decoration {
+                font-size: 1.3rem;
+            }
+
+            .header-decoration.top-left,
+            .header-decoration.top-right,
+            .header-decoration.bottom-left,
+            .header-decoration.bottom-right {
+                display: none;
             }
 
             .letter-title {
-                font-size: 2rem;
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+                padding: 0 20px;
+            }
+
+            .letter-title::before,
+            .letter-title::after {
+                font-size: 1.3rem;
+            }
+
+            .letter-title::before {
+                left: -5px;
+            }
+
+            .letter-title::after {
+                right: -5px;
+            }
+
+            .letter-header::after {
+                font-size: 1rem;
+                letter-spacing: 8px;
+                bottom: -25px;
             }
 
             .letter-body {
-                font-size: 1.2rem;
-                line-height: 1.8;
+                font-size: 1.3rem;
+                line-height: 2;
                 min-height: 300px;
+                padding: 20px 0;
             }
 
             .letter-date {
-                font-size: 1rem;
+                font-size: 1.1rem;
+                padding: 8px 15px;
+                letter-spacing: 1px;
             }
 
             .letter-signature {
-                font-size: 1.4rem;
-                margin-top: 30px;
+                font-size: 1.5rem;
+                margin-top: 40px;
+                margin-bottom: 20px;
+                padding-top: 20px;
+                padding-bottom: 15px;
+            }
+
+            .signature-name {
+                font-size: 1.7rem;
             }
 
             .music-control {
@@ -392,31 +896,66 @@
 
         @media (max-width: 480px) {
             .container {
-                padding: 70px 10px 15px;
+                padding: 70px 10px 50px;
             }
 
-            .letter-container {
-                padding: 30px 20px;
+            .letter-header {
+                margin-bottom: 40px;
+                padding: 30px 10px 30px;
+            }
+
+            .header-decoration {
+                display: none;
             }
 
             .letter-title {
-                font-size: 1.8rem;
-                margin-bottom: 10px;
+                font-size: 2rem;
+                margin-bottom: 15px;
+                letter-spacing: 1px;
+                padding: 0 15px;
+            }
+
+            .letter-title::before,
+            .letter-title::after {
+                font-size: 1rem;
+            }
+
+            .letter-title::before {
+                left: -5px;
+            }
+
+            .letter-title::after {
+                right: -5px;
+            }
+
+            .letter-header::after {
+                font-size: 0.9rem;
+                letter-spacing: 5px;
+                bottom: -20px;
             }
 
             .letter-body {
-                font-size: 1.1rem;
-                line-height: 1.7;
+                font-size: 1.15rem;
+                line-height: 1.9;
                 padding: 15px 0;
             }
 
             .letter-date {
-                font-size: 0.9rem;
+                font-size: 1rem;
+                padding: 6px 12px;
+                letter-spacing: 1px;
             }
 
             .letter-signature {
-                font-size: 1.2rem;
-                margin-top: 25px;
+                font-size: 1.3rem;
+                margin-top: 30px;
+                margin-bottom: 15px;
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+
+            .signature-name {
+                font-size: 1.5rem;
             }
 
             .music-control {
@@ -447,24 +986,27 @@
         <span class="music-label">Music</span>
     </div>
 
-    <audio id="backgroundMusic" loop>
-        <source src="public/songs/playlists/period_mix/Daniel Caesar - Best Part (Audio) ft. H.E.R..mp3" type="audio/mpeg">
-    </audio>
+    <audio id="backgroundMusic"></audio>
 
     <div class="stars" id="stars"></div>
     <div class="hearts" id="hearts"></div>
+    <div class="sparkles" id="sparkles"></div>
+    <div class="cute-elements" id="cuteElements"></div>
 
     <div class="container">
         <div class="letter-container">
             <div class="letter-content">
-                <div class="letter-header">
-                    <h1 class="letter-title">💌 A Letter For You 💌</h1>
-                    <p class="letter-date">February 3rd, 2026</p>
+                <div class="letter-header" id="letterHeader">
+                    <div class="header-decoration top-left">💝</div>
+                    <div class="header-decoration top-right">💝</div>
+                    <div class="header-decoration bottom-left">💝</div>
+                    <div class="header-decoration bottom-right">💝</div>
+                    <h1 class="letter-title">💌 My Valentine Letter 💌</h1>
+                    <p class="letter-date">February 14th, 2026 💝</p>
                 </div>
                 
                 <div class="letter-body" id="letterBody">
-                    <span class="typewriter-text" id="typewriterText"></span>
-                    <span class="cursor" id="cursor"></span>
+                    <!-- Lines will be dynamically inserted here -->
                 </div>
 
                 <div class="letter-signature">
@@ -497,70 +1039,353 @@ I love you more than words can express, and I'm so grateful that you're mine.
 
 Forever yours,`;
 
-        // Typewriter effect
-        let currentIndex = 0;
-        let isTyping = true;
-        const typewriterText = document.getElementById('typewriterText');
-        const cursor = document.getElementById('cursor');
+        // Scroll reveal with typewriter effect - type lines sequentially
+        let scrollRevealInitialized = false;
+        function initScrollReveal() {
+            // Prevent multiple initializations
+            if (scrollRevealInitialized) return;
+            
+            const letterBody = document.getElementById('letterBody');
+            if (!letterBody) return;
 
-        function typeWriter() {
-            if (currentIndex < letterContent.length && isTyping) {
-                typewriterText.textContent = letterContent.substring(0, currentIndex + 1);
-                currentIndex++;
+            // Clear any existing content
+            letterBody.innerHTML = '';
+
+            // Split content into lines
+            const lines = letterContent.split('\n').filter(line => line.trim() !== '');
+            
+            scrollRevealInitialized = true;
+            
+            // Store full text for each line and create elements
+            const lineData = [];
+            let currentTypingIndex = -1; // Track which line is currently typing (-1 means none)
+            
+            lines.forEach((line, index) => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'letter-line';
+                const fullText = line.trim();
+                lineDiv.setAttribute('data-full-text', fullText);
+                lineDiv.textContent = '';
                 
-                // Random delay between characters for more natural typing
-                const delay = Math.random() * 50 + 30; // 30-80ms
-                setTimeout(typeWriter, delay);
-            } else {
-                // Stop cursor blinking when done
-                cursor.style.display = 'none';
+                // Store reference and full text
+                const lineObj = {
+                    element: lineDiv,
+                    fullText: fullText,
+                    isTyping: false,
+                    currentIndex: 0,
+                    lineIndex: index
+                };
+                
+                // Attach lineObj to element for easy access
+                lineDiv._lineObj = lineObj;
+                lineData.push(lineObj);
+                
+                if (index === 0) {
+                    // Show first line immediately
+                    lineDiv.textContent = fullText;
+                    lineDiv.classList.add('visible');
+                }
+                
+                letterBody.appendChild(lineDiv);
+            });
+
+            // Typewriter function for a single line
+            function typeLine(lineObj) {
+                // Check if another line is already typing
+                if (currentTypingIndex !== -1 && currentTypingIndex !== lineObj.lineIndex) {
+                    // Another line is typing, wait for it to finish
+                    return;
+                }
+
+                // Mark this line as the one currently typing
+                if (!lineObj.isTyping) {
+                    currentTypingIndex = lineObj.lineIndex;
+                    lineObj.isTyping = true;
+                    lineObj.element.classList.add('typing');
+                    lineObj.element.style.opacity = '1';
+                    lineObj.element.style.transform = 'translateY(0)';
+                }
+
+                // Check if we're done typing
+                if (lineObj.currentIndex >= lineObj.fullText.length) {
+                    lineObj.isTyping = false;
+                    lineObj.element.classList.remove('typing');
+                    lineObj.element.classList.add('visible');
+                    // Remove cursor if exists
+                    const cursor = lineObj.element.querySelector('.cursor');
+                    if (cursor) cursor.remove();
+                    // Set final text
+                    lineObj.element.textContent = lineObj.fullText;
+                    
+                    // Mark no line is typing
+                    currentTypingIndex = -1;
+                    
+                    // Check if this is the last line
+                    const isLastLine = lineObj.lineIndex === lineData.length - 1;
+                    
+                    if (isLastLine) {
+                        // All text is complete, show signature after a short delay
+                        setTimeout(() => {
+                            const signature = document.querySelector('.letter-signature');
+                            if (signature) {
+                                signature.classList.add('show');
+                            }
+                        }, 500);
+                    } else {
+                        // Start typing the next line if it's in viewport
+                        const nextLineIndex = lineObj.lineIndex + 1;
+                        if (nextLineIndex < lineData.length) {
+                            const nextLine = lineData[nextLineIndex];
+                            // Check if next line is in viewport
+                            const rect = nextLine.element.getBoundingClientRect();
+                            const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+                            
+                            if (isInViewport && !nextLine.element.classList.contains('visible')) {
+                                // Small delay before starting next line
+                                setTimeout(() => {
+                                    typeLine(nextLine);
+                                }, 300);
+                            }
+                        }
+                    }
+                    return;
+                }
+
+                // Type next character
+                const textToShow = lineObj.fullText.substring(0, lineObj.currentIndex + 1);
+                
+                // Remove existing cursor temporarily
+                const existingCursor = lineObj.element.querySelector('.cursor');
+                if (existingCursor) {
+                    existingCursor.remove();
+                }
+                
+                // Set text content
+                lineObj.element.textContent = textToShow;
+                
+                // Add cursor after text
+                const cursorElement = document.createElement('span');
+                cursorElement.className = 'cursor';
+                lineObj.element.appendChild(cursorElement);
+                
+                // Increment for next character
+                lineObj.currentIndex++;
+
+                // Continue typing with random delay
+                const delay = Math.random() * 40 + 50; // 50-90ms per character
+                setTimeout(() => {
+                    typeLine(lineObj);
+                }, delay);
+            }
+
+            // Intersection Observer for scroll reveal with typing
+            const observerOptions = {
+                root: null,
+                rootMargin: '-5% 0px -5% 0px', // Trigger when line is about to enter viewport
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const lineElement = entry.target;
+                    if (entry.isIntersecting && !lineElement.classList.contains('visible') && !lineElement.classList.contains('typing')) {
+                        // Get lineObj from element
+                        const lineObj = lineElement._lineObj;
+                        if (lineObj && !lineObj.isTyping && lineObj.currentIndex === 0) {
+                            // Only start typing if no other line is currently typing
+                            if (currentTypingIndex === -1) {
+                                typeLine(lineObj);
+                            }
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all lines except the first one
+            lineData.forEach((lineObj, index) => {
+                if (index > 0) {
+                    observer.observe(lineObj.element);
+                }
+            });
+        }
+
+        // Initialize on page load (only once)
+        function initializeOnce() {
+            if (!scrollRevealInitialized) {
+                initScrollReveal();
             }
         }
 
-        // Start typing when page loads
-        window.addEventListener('load', () => {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeOnce);
+        } else {
+            initializeOnce();
+        }
+
+        // Create floating hearts around header
+        function createHeaderHeart() {
+            const header = document.getElementById('letterHeader');
+            if (!header) return;
+
+            const heart = document.createElement('div');
+            heart.className = 'header-heart';
+            const hearts = ['💝', '💕', '💖', '💗', '💝', '💓', '💞', '💘'];
+            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            
+            // Position around the header
+            const positions = [
+                { top: '10%', left: '5%' },
+                { top: '20%', right: '5%' },
+                { bottom: '15%', left: '8%' },
+                { bottom: '25%', right: '8%' },
+                { top: '50%', left: '2%' },
+                { top: '50%', right: '2%' }
+            ];
+            
+            const pos = positions[Math.floor(Math.random() * positions.length)];
+            Object.assign(heart.style, pos, {
+                position: 'absolute',
+                fontSize: (Math.random() * 8 + 14) + 'px',
+                animationDelay: Math.random() * 2 + 's',
+                animationDuration: (Math.random() * 3 + 6) + 's'
+            });
+            
+            header.appendChild(heart);
+
             setTimeout(() => {
-                typeWriter();
-            }, 500);
-        });
+                if (heart.parentNode) {
+                    heart.remove();
+                }
+            }, 10000);
+        }
+
+        // Create header hearts periodically
+        function initHeaderHearts() {
+            const header = document.getElementById('letterHeader');
+            if (header) {
+                // Create initial hearts
+                for (let i = 0; i < 6; i++) {
+                    setTimeout(() => createHeaderHeart(), i * 500);
+                }
+                // Continue creating hearts
+                setInterval(createHeaderHeart, 3000);
+            }
+        }
+
+        // Initialize header hearts
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initHeaderHearts);
+        } else {
+            initHeaderHearts();
+        }
+        window.addEventListener('load', initHeaderHearts);
+
+        // Valentine songs playlist
+        const valentineSongs = [
+            'public/songs/playlists/valentines/Adore You - Harry Styles.mp3',
+            'public/songs/playlists/valentines/Alex Warren - Ordinary (Official Video) - Alex Warren.mp3',
+            'public/songs/playlists/valentines/As Long As You Love Me - Justin Bieber.mp3',
+            'public/songs/playlists/valentines/Camylio - high, high, high (Official Music Video) - CamylioVEVO.mp3',
+            'public/songs/playlists/valentines/Chris Brown - Under The Influence (Audio) - ChrisBrownVEVO.mp3',
+            'public/songs/playlists/valentines/Ed Sheeran - Azizam (Pink Heart Video) - Ed Sheeran.mp3',
+            'public/songs/playlists/valentines/Ed Sheeran - Perfect - LatinHype.mp3',
+            'public/songs/playlists/valentines/Ed Sheeran - Photograph (Official Music Video).mp3',
+            'public/songs/playlists/valentines/Ellie Goulding - Love Me Like You Do (Official Video) - EllieGouldingVEVO.mp3',
+            'public/songs/playlists/valentines/Ellie Goulding - Still Falling For You (From Bridget Jones\'s Baby Original Soundtrack) - EllieGouldingVEVO.mp3',
+            'public/songs/playlists/valentines/Gesaffelstein & The Weeknd - Lost in the Fire (Official Video) - GesaffelsteinVEVO.mp3',
+            'public/songs/playlists/valentines/Hailee Steinfeld, BloodPop® - Capital Letters - FiftyShadesVEVO.mp3',
+            'public/songs/playlists/valentines/I Want It That Way - Backstreet Boys.mp3',
+            'public/songs/playlists/valentines/Intentions - Justin Bieber.mp3',
+            'public/songs/playlists/valentines/James Arthur - Medicine (Official Video).mp3',
+            'public/songs/playlists/valentines/John Legend - All of Me (Lyrics).mp3',
+            'public/songs/playlists/valentines/JP Cooper - Too Close.mp3',
+            'public/songs/playlists/valentines/Kane Brown - Heaven (Official Video) - KaneBrownVEVO.mp3',
+            'public/songs/playlists/valentines/Kane Brown, Katelyn Brown - Thank God (Official Music Video) - KaneBrownVEVO.mp3',
+            'public/songs/playlists/valentines/Katy Perry - Unconditionally (Official) - KatyPerryVEVO.mp3',
+            'public/songs/playlists/valentines/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video) - LadyGagaVEVO.mp3',
+            'public/songs/playlists/valentines/Love Story - Taylor Swift.mp3',
+            'public/songs/playlists/valentines/Lover - Taylor Swift.mp3',
+            'public/songs/playlists/valentines/Mark Ambor - Belong Together (Official Visualizer) - Mark Ambor.mp3',
+            'public/songs/playlists/valentines/Tate McRae - I know love (Official Video) ft. The Kid LAROI - TateMcRaeVEVO.mp3',
+            'public/songs/playlists/valentines/The Weeknd - Out of Time - TheWeekndVEVO.mp3',
+            'public/songs/playlists/valentines/The Weeknd, Ariana Grande - Die For You (Remix _ Lyric Video) - TheWeekndVEVO.mp3',
+            'public/songs/playlists/valentines/Tom Grennan - Little Bit of Love (Official Video).mp3',
+            'public/songs/playlists/valentines/Yellow - Lofi Fruits Music, Avocuddle , Fets.mp3',
+            'public/songs/playlists/valentines/yung kai - blue (official music video) - yung kai.mp3'
+        ];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
 
         // Music control
         const musicControl = document.getElementById('musicControl');
         const backgroundMusic = document.getElementById('backgroundMusic');
         let isPlaying = false;
+        let currentPlaylist = shuffleArray(valentineSongs);
+        let currentSongIndex = 0;
 
         // Set volume to soft (30%)
         backgroundMusic.volume = 0.3;
 
-        musicControl.addEventListener('click', () => {
+        // Load and play a song
+        function loadAndPlaySong() {
+            if (currentSongIndex >= currentPlaylist.length) {
+                // Shuffle again when playlist ends
+                currentPlaylist = shuffleArray(valentineSongs);
+                currentSongIndex = 0;
+            }
+            
+            backgroundMusic.src = currentPlaylist[currentSongIndex];
+            backgroundMusic.load();
+            
+            if (isPlaying) {
+                backgroundMusic.play().catch(error => {
+                    console.log('Autoplay prevented:', error);
+                });
+            }
+        }
+
+        // When a song ends, play the next one
+        backgroundMusic.addEventListener('ended', () => {
+            currentSongIndex++;
+            loadAndPlaySong();
+        });
+
+        // Handle play/pause
+        function toggleMusic() {
             if (isPlaying) {
                 backgroundMusic.pause();
                 musicControl.classList.remove('playing');
                 isPlaying = false;
             } else {
+                // Play the current song
                 backgroundMusic.play().catch(error => {
-                    console.log('Autoplay prevented:', error);
+                    console.log('Play error:', error);
+                    // If play fails, try loading a new song
+                    loadAndPlaySong();
                 });
                 musicControl.classList.add('playing');
                 isPlaying = true;
             }
-        });
+        }
+
+        musicControl.addEventListener('click', toggleMusic);
 
         // Touch support for music control
         musicControl.addEventListener('touchend', (e) => {
             e.preventDefault();
-            if (isPlaying) {
-                backgroundMusic.pause();
-                musicControl.classList.remove('playing');
-                isPlaying = false;
-            } else {
-                backgroundMusic.play().catch(error => {
-                    console.log('Autoplay prevented:', error);
-                });
-                musicControl.classList.add('playing');
-                isPlaying = true;
-            }
+            toggleMusic();
         });
+
+        // Initialize with first song (but don't autoplay)
+        loadAndPlaySong();
 
         // Create stars
         function createStar() {
@@ -595,13 +1420,187 @@ Forever yours,`;
             }, 25000);
         }
 
-        // Create hearts periodically
-        setInterval(createHeart, 2000);
+        // Create hearts periodically - more frequently for cuter effect
+        setInterval(createHeart, 1500);
+
+        // Add cute entrance animation for signature
+        const signature = document.querySelector('.letter-signature');
+        if (signature) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        signature.style.animation = 'fadeInUp 1s ease-out, pulse 2s ease-in-out infinite 1s';
+                    }
+                });
+            }, { threshold: 0.5 });
+            observer.observe(signature);
+        }
 
         // Initialize some hearts
         for (let i = 0; i < 10; i++) {
             setTimeout(() => createHeart(), i * 500);
         }
+
+        // Create sparkles
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            const sparkles = ['✨', '⭐', '💫', '🌟', '✨'];
+            sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.animationDuration = (Math.random() * 5 + 6) + 's';
+            sparkle.style.animationDelay = Math.random() * 3 + 's';
+            sparkle.style.fontSize = (Math.random() * 8 + 12) + 'px';
+            document.getElementById('sparkles').appendChild(sparkle);
+
+            setTimeout(() => {
+                sparkle.remove();
+            }, 15000);
+        }
+
+        // Create sparkles periodically
+        setInterval(createSparkle, 1500);
+
+        // Initialize some sparkles
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => createSparkle(), i * 300);
+        }
+
+        // Create cute floating emojis
+        function createCuteEmoji() {
+            const emoji = document.createElement('div');
+            emoji.className = 'cute-emoji';
+            const cuteEmojis = ['💝', '💕', '💖', '💗', '💘', '💓', '💞', '💟', '🎀', '💌', '🌹', '💐'];
+            emoji.textContent = cuteEmojis[Math.floor(Math.random() * cuteEmojis.length)];
+            emoji.style.left = Math.random() * 100 + '%';
+            emoji.style.animationDuration = (Math.random() * 8 + 10) + 's';
+            emoji.style.animationDelay = Math.random() * 4 + 's';
+            emoji.style.fontSize = (Math.random() * 10 + 18) + 'px';
+            document.getElementById('cuteElements').appendChild(emoji);
+
+            setTimeout(() => {
+                emoji.remove();
+            }, 20000);
+        }
+
+        // Create cute emojis periodically
+        setInterval(createCuteEmoji, 3000);
+
+        // Initialize some cute emojis
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => createCuteEmoji(), i * 800);
+        }
+
+        // Add click interaction - create burst of hearts on click
+        let clickCount = 0;
+        document.addEventListener('click', (e) => {
+            clickCount++;
+            if (clickCount % 3 === 0) { // Every 3rd click
+                createHeartBurst(e.clientX, e.clientY);
+            }
+        });
+
+        function createHeartBurst(x, y) {
+            const burstEmojis = ['💖', '💕', '❤️', '💗', '💝', '💓', '💞'];
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.textContent = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
+                    heart.style.left = x + 'px';
+                    heart.style.top = y + 'px';
+                    heart.style.position = 'fixed';
+                    heart.style.fontSize = '20px';
+                    heart.style.animation = 'burst 1s ease-out forwards';
+                    heart.style.zIndex = '9999';
+                    document.body.appendChild(heart);
+
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 1000);
+                }, i * 50);
+            }
+        }
+
+        // Add burst animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes burst {
+                0% {
+                    transform: translate(0, 0) scale(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(1.5) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add parallax effect on mouse move
+        let mouseX = 0;
+        let mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 15;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 15;
+            
+            const letterContentElement = document.querySelector('.letter-content');
+            if (letterContentElement) {
+                letterContentElement.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+                letterContentElement.style.transition = 'transform 0.1s ease-out';
+            }
+        });
+
+        // Add love emojis around the letter container
+        function addLoveEmojis() {
+            const container = document.querySelector('.letter-container');
+            if (!container) return;
+
+            const positions = [
+                { top: '10%', left: '-5%' },
+                { top: '30%', right: '-5%' },
+                { bottom: '20%', left: '-5%' },
+                { bottom: '40%', right: '-5%' }
+            ];
+
+            positions.forEach((pos, index) => {
+                const emoji = document.createElement('div');
+                emoji.className = 'love-emoji';
+                emoji.textContent = ['💕', '💖', '💗', '💝'][index];
+                emoji.style.top = pos.top || 'auto';
+                emoji.style.bottom = pos.bottom || 'auto';
+                emoji.style.left = pos.left || 'auto';
+                emoji.style.right = pos.right || 'auto';
+                emoji.style.animationDelay = index * 2 + 's';
+                container.appendChild(emoji);
+            });
+        }
+
+        // Add love emojis after page loads
+        window.addEventListener('load', () => {
+            setTimeout(addLoveEmojis, 1000);
+        });
+
+
+        // Add typing indicator animation
+        const cursor = document.getElementById('cursor');
+        if (cursor) {
+            cursor.style.animation = 'blink 1s infinite, cursorPulse 2s ease-in-out infinite';
+        }
+
+        const cursorPulseStyle = document.createElement('style');
+        cursorPulseStyle.textContent += `
+            @keyframes cursorPulse {
+                0%, 100% {
+                    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+                }
+                50% {
+                    box-shadow: 0 0 15px rgba(255, 182, 193, 0.8);
+                }
+            }
+        `;
+        document.head.appendChild(cursorPulseStyle);
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"

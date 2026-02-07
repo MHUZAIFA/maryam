@@ -3222,7 +3222,7 @@
                 <div class="main-tabs">
                     <div class="main-tab active" data-tab="you-and-me">You and Me</div>
                     <div class="main-tab" data-tab="period-mix">Period Mix</div>
-                    <div class="main-tab" data-tab="valentine">💕 Valentine</div>
+                    <div class="main-tab" data-tab="valentine" id="valentine-tab" style="display: none;">💕 Valentine</div>
                 </div>
             </div>
         </div>
@@ -3402,11 +3402,68 @@
     <audio id="audioPlayer"></audio>
 
     <script>
+        // Check if today is February 14th at 12:01 AM or later
+        function isValentineDay() {
+            const now = new Date();
+            const month = now.getMonth() + 1; // getMonth() returns 0-11
+            const date = now.getDate();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            // February 14th, and time is 12:01 AM (00:01) or later
+            if (month === 2 && date === 14) {
+                // If it's February 14th, check if it's past 12:01 AM
+                if (hours > 0 || (hours === 0 && minutes >= 1)) {
+                    return true;
+                }
+            }
+            
+            // Also allow if it's past February 14th
+            if (month === 2 && date > 14) {
+                return true;
+            }
+            
+            // Or if it's March or later (still February 14th or later in the year)
+            if (month > 2) {
+                return true;
+            }
+            
+            return false;
+        }
+
+        // Show/hide Valentine tab based on date
+        function toggleValentineTab() {
+            const valentineTab = document.getElementById('valentine-tab');
+            if (valentineTab) {
+                if (isValentineDay()) {
+                    valentineTab.style.display = '';
+                } else {
+                    valentineTab.style.display = 'none';
+                    // If Valentine tab is active but it's not Feb 14 12:01 AM or later, switch to You and Me
+                    if (valentineTab.classList.contains('active')) {
+                        valentineTab.classList.remove('active');
+                        const youAndMeTab = document.querySelector('.main-tab[data-tab="you-and-me"]');
+                        if (youAndMeTab) {
+                            youAndMeTab.classList.add('active');
+                            youAndMeTab.click();
+                        }
+                    }
+                }
+            }
+        }
+
+        // Run on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', toggleValentineTab);
+        } else {
+            toggleValentineTab();
+        }
+
         const songs = [
             {
                 title: "Die For You",
                 artist: "The Weeknd",
-                src: "public/songs/Die For You - The Weeknd.mp3",
+                src: "public/songs/playlists/you-and-me/Die For You - The Weeknd.mp3",
                 albumCover: null,
                 period: "romantic",
                 duration: "4:20",
@@ -3415,7 +3472,7 @@
             {
                 title: "Often (Kygo Remix)",
                 artist: "The Weeknd",
-                src: "public/songs/Often (Kygo Remix) - The Weeknd.mp3",
+                src: "public/songs/playlists/you-and-me/Often (Kygo Remix) - The Weeknd.mp3",
                 albumCover: null,
                 period: "energetic",
                 duration: "4:12",
@@ -3424,11 +3481,128 @@
             {
                 title: "Blinding Lights",
                 artist: "The Weeknd",
-                src: "public/songs/The Weeknd - Blinding Lights (Official Audio) - TheWeekndVEVO.mp3",
+                src: "public/songs/playlists/you-and-me/The Weeknd - Blinding Lights (Official Audio) - TheWeekndVEVO.mp3",
                 albumCover: null,
                 period: "energetic",
                 duration: "3:20",
                 lyrics: "I've been tryna call\nI've been on my own for long enough\nMaybe you can show me how to love, maybe\n\nI'm going through withdrawals\nYou don't even have to do too much\nYou can turn me on with just a touch, baby\n\nI look around and Sin City's cold and empty (oh)\nNo one's around to judge me (oh)\nI can't see clearly when you're gone\n\nI said, ooh, I'm blinded by the lights\nNo, I can't sleep until I feel your touch\nI said, ooh, I'm drowning in the night\nOh, when I'm like this, you're the one I trust\n\nHey, hey, hey\n\nI'm running out of time\n'Cause I can see the sun light up the sky\nSo I hit the road in overdrive, baby, oh\n\nThe city's cold and empty, no one's around to judge me, oh\nI can't see clearly when you're gone\n\nI said, ooh, I'm blinded by the lights\nNo, I can't sleep until I feel your touch\nI said, ooh, I'm drowning in the night\nOh, when I'm like this, you're the one I trust\n\nI'm just walking by to let you know (by to let you know)\nI can never say it on the phone (say it on the phone)\nWill never let you go this time (ooh)\n\nI said, ooh, I'm blinded by the lights\nNo, I can't sleep until I feel your touch"
+            },
+            {
+                title: "Into You",
+                artist: "Ariana Grande",
+                src: "public/songs/playlists/you-and-me/Ariana Grande - Into You (Official Video).mp3",
+                albumCover: null,
+                period: "energetic",
+                duration: "3:41",
+                lyrics: ""
+            },
+            {
+                title: "Love Me Harder",
+                artist: "Ariana Grande, The Weeknd",
+                src: "public/songs/playlists/you-and-me/Ariana Grande, The Weeknd - Love Me Harder - ArianaGrandeVevo.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:56",
+                lyrics: ""
+            },
+            {
+                title: "Rock Bottom",
+                artist: "Hailee Steinfeld",
+                src: "public/songs/playlists/you-and-me/Hailee Steinfeld - Rock Bottom (Official Audio).mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:18",
+                lyrics: ""
+            },
+            {
+                title: "Capital Letters",
+                artist: "Hailee Steinfeld, BloodPop®",
+                src: "public/songs/playlists/you-and-me/Hailee Steinfeld, BloodPop® - Capital Letters - FiftyShadesVEVO (1).mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:39",
+                lyrics: ""
+            },
+            {
+                title: "Falling Like The Stars",
+                artist: "James Arthur",
+                src: "public/songs/playlists/you-and-me/James Arthur - Falling Like The Stars (Lyric Video).mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:32",
+                lyrics: ""
+            },
+            {
+                title: "Want To Want Me",
+                artist: "Jason Derulo",
+                src: "public/songs/playlists/you-and-me/Jason Derulo Want To Want Me (Official Audio) - Jason Derulo.mp3",
+                albumCover: null,
+                period: "energetic",
+                duration: "3:27",
+                lyrics: ""
+            },
+            {
+                title: "Wherever You Are",
+                artist: "Kodaline",
+                src: "public/songs/playlists/you-and-me/Kodaline - Wherever You Are (Official Lyric Video).mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "4:05",
+                lyrics: ""
+            },
+            {
+                title: "Shallow",
+                artist: "Lady Gaga, Bradley Cooper",
+                src: "public/songs/playlists/you-and-me/Lady Gaga, Bradley Cooper - Shallow (from A Star Is Born) (Official Music Video).mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:37",
+                lyrics: ""
+            },
+            {
+                title: "I Like Me Better",
+                artist: "Lauv",
+                src: "public/songs/playlists/you-and-me/Lauv - I Like Me Better [Official Video] - Lauv.mp3",
+                albumCover: null,
+                period: "chill",
+                duration: "3:17",
+                lyrics: "I met you in the dark, you lit me up\nYou made me feel as though I was enough\nWe sat there in the park, you knew the rest\nThen you looked at me and said\n\"You're my best friend\"\nAnd I knew what it was\nYou're my best friend\n\nSo I told you that I loved you\nAfter we watched the sunset\nPut my arm around you for the first time\nI said, \"I love you\"\nAnd you told me that you loved me too\n\nI like me better when I'm with you\nI like me better when I'm with you\nI knew from the first time, I'd stay for a long time\n'Cause I like me better when I'm with you"
+            },
+            {
+                title: "Perfect",
+                artist: "One Direction",
+                src: "public/songs/playlists/you-and-me/One Direction - Perfect (Official Video) - OneDirectionVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:50",
+                lyrics: ""
+            },
+            {
+                title: "Let Me",
+                artist: "ZAYN",
+                src: "public/songs/playlists/you-and-me/ZAYN - Let Me (Lyrics  Lyrics Video).mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:39",
+                lyrics: ""
+            },
+            {
+                title: "Dusk Till Dawn",
+                artist: "ZAYN & Sia",
+                src: "public/songs/playlists/you-and-me/ZAYN & Sia - Dusk Till Dawn (Lyrics) - 7clouds.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "4:13",
+                lyrics: ""
+            },
+            {
+                title: "I Don't Wanna Live Forever",
+                artist: "ZAYN, Taylor Swift",
+                src: "public/songs/playlists/you-and-me/ZAYN, Taylor Swift - I Don't Wanna Live Forever (Fifty Shades Darker) - Taylor Swift.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "4:05",
+                lyrics: ""
             },
             {
                 title: "Scars To Your Beautiful",
@@ -3564,16 +3738,239 @@
                 period: "chill",
                 duration: "3:06",
                 lyrics: "Saturn\nSaturn\nSaturn\nSaturn\n\nHow many times can I reinvent before I'm gone?\nHow many lives can I live?\nHow many times can I die?\n\nSaturn\nSaturn\nSaturn\nSaturn\n\nHow many times can I reinvent before I'm gone?\nHow many lives can I live?\nHow many times can I die?\n\nSaturn\nSaturn\nSaturn\nSaturn"
+            },
+            {
+                title: "Perfect",
+                artist: "Ed Sheeran",
+                src: "public/songs/playlists/valentines/Ed Sheeran - Perfect - LatinHype.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "4:23",
+                lyrics: "I found a love for me\nDarling, just dive right in\nAnd follow my lead\nWell, I found a girl, beautiful and sweet\nI never knew you were the someone waiting for me\n\n'Cause we were just kids when we fell in love\nNot knowing what it was\nI will not give you up this time\nBut darling, just kiss me slow, your heart is all I own\nAnd in your eyes, you're holding mine\n\nBaby, I'm dancing in the dark with you between my arms\nBarefoot on the grass, listening to our favorite song\nWhen you said you looked a mess, I whispered underneath my breath\nBut you heard it, darling, you look perfect tonight\n\nWell I found a woman, stronger than anyone I know\nShe shares my dreams, I hope that someday I'll share her home\nI found a love, to carry more than just my secrets\nTo carry love, to carry children of our own\n\nWe are still kids, but we're so in love\nFighting against all odds\nI know we'll be alright this time\nDarling, just hold my hand\nBe my girl, I'll be your man\nI see my future in your eyes\n\nBaby, I'm dancing in the dark, with you between my arms\nBarefoot on the grass, listening to our favorite song\nWhen I saw you in that dress, looking so beautiful\nI don't deserve this, darling, you look perfect tonight\n\nBaby, I'm dancing in the dark, with you between my arms\nBarefoot on the grass, listening to our favorite song\nI have faith in what I see\nNow I know I have met an angel in person\nAnd she looks perfect\nI don't deserve this\nYou look perfect tonight"
+            },
+            {
+                title: "Heaven",
+                artist: "Kane Brown",
+                src: "public/songs/playlists/valentines/Kane Brown - Heaven (Official Video) - KaneBrownVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "2:59",
+                lyrics: "I found a love for me\nDarling, just dive right in\nAnd follow my lead\nWell, I found a girl, beautiful and sweet\nI never knew you were the someone waiting for me\n\n'Cause we were just kids when we fell in love\nNot knowing what it was\nI will not give you up this time\nBut darling, just kiss me slow, your heart is all I own\nAnd in your eyes, you're holding mine\n\nBaby, I'm dancing in the dark with you between my arms\nBarefoot on the grass, listening to our favorite song\nWhen you said you looked a mess, I whispered underneath my breath\nBut you heard it, darling, you look perfect tonight"
+            },
+            {
+                title: "Thank God",
+                artist: "Kane Brown, Katelyn Brown",
+                src: "public/songs/playlists/valentines/Kane Brown, Katelyn Brown - Thank God (Official Music Video) - KaneBrownVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "2:54",
+                lyrics: "I found a love for me\nDarling, just dive right in\nAnd follow my lead\nWell, I found a girl, beautiful and sweet\nI never knew you were the someone waiting for me"
+            },
+            {
+                title: "Out of Time",
+                artist: "The Weeknd",
+                src: "public/songs/playlists/valentines/The Weeknd - Out of Time - TheWeekndVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:34",
+                lyrics: "I found a love for me\nDarling, just dive right in\nAnd follow my lead\nWell, I found a girl, beautiful and sweet\nI never knew you were the someone waiting for me"
+            },
+            {
+                title: "Die For You (Remix)",
+                artist: "The Weeknd, Ariana Grande",
+                src: "public/songs/playlists/valentines/The Weeknd, Ariana Grande - Die For You (Remix _ Lyric Video) - TheWeekndVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:52",
+                lyrics: "I'm findin' ways to articulate the feelin' I'm goin' through\nI just can't say I don't love you\n'Cause I love you, yeah\n\nIt's hard for me to communicate the thoughts that I hold\nBut tonight I'm gon' let you know\nLet me tell the truth\n\nBaby, let me tell the truth, yeah\n\nBaby, I would die for you, you know\nI would die for you, yeah\nAnd all these other things I do for you\nAin't for anybody else"
+            },
+            {
+                title: "Under The Influence",
+                artist: "Chris Brown",
+                src: "public/songs/playlists/valentines/Chris Brown - Under The Influence (Audio) - ChrisBrownVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:04",
+                lyrics: "I found a love for me\nDarling, just dive right in\nAnd follow my lead\nWell, I found a girl, beautiful and sweet\nI never knew you were the someone waiting for me"
+            },
+            {
+                title: "Lost in the Fire",
+                artist: "Gesaffelstein & The Weeknd",
+                src: "public/songs/playlists/valentines/Gesaffelstein & The Weeknd - Lost in the Fire (Official Video) - GesaffelsteinVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:22",
+                lyrics: "I found a love for me\nDarling, just dive right in\nAnd follow my lead\nWell, I found a girl, beautiful and sweet\nI never knew you were the someone waiting for me"
+            },
+            {
+                title: "Yellow",
+                artist: "Lofi Fruits Music, Avocuddle, Fets",
+                src: "public/songs/playlists/valentines/Yellow - Lofi Fruits Music, Avocuddle , Fets.mp3",
+                albumCover: null,
+                period: "chill",
+                duration: "3:29",
+                lyrics: "Look at the stars\nLook how they shine for you\nAnd everything you do\nYeah, they were all yellow\n\nI came along\nI wrote a song for you\nAnd all the things you do\nAnd it was called Yellow\n\nSo then I took my turn\nOh, what a thing to have done\nAnd it was all yellow\n\nYour skin, oh yeah, your skin and bones\nTurn into something beautiful\nYou know, you know I love you so\nYou know I love you so\n\nI swam across\nI jumped across for you\nOh, what a thing to do\n'Cause you were all yellow\n\nI drew a line\nI drew a line for you\nOh, what a thing to do\nAnd it was all yellow\n\nYour skin, oh yeah, your skin and bones\nTurn into something beautiful\nAnd you know, for you I'd bleed myself dry\nFor you I'd bleed myself dry\n\nIt's true\nLook how they shine for you\nLook how they shine for you\nLook how they shine for you\nLook how they shine for you\nLook how they shine\nLook at the stars\nLook how they shine for you\nAnd all the things that you do"
+            },
+            {
+                title: "Adore You",
+                artist: "Harry Styles",
+                src: "public/songs/playlists/valentines/Adore You - Harry Styles.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:27",
+                lyrics: "Walk in your rainbow paradise\nStrawberry lipstick state of mind\nI get so lost inside your eyes\nWould it be alright if I just\n\nAdore you\nAdore you\nAdore you\nAdore you\n\nYou don't have to say you love me\nYou don't have to say nothing\nYou don't have to say you're mine\nHoney, I'd walk through fire for you\nJust let me adore you\nLike it's the only thing I'll ever do\nLike it's the only thing I'll ever do"
+            },
+            {
+                title: "As Long As You Love Me",
+                artist: "Justin Bieber",
+                src: "public/songs/playlists/valentines/As Long As You Love Me - Justin Bieber.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:40",
+                lyrics: "As long as you love me\nWe could be starving\nWe could be homeless\nWe could be broke\nAs long as you love me\nI'll be your platinum\nI'll be your silver\nI'll be your gold\n\nAs long as you love, love me, love me\nAs long as you love, love me, love me\nI'll be your soldier\nFighting every second of the day for your dreams, girl\nI'll be your Hova\nYou could be my Destiny's Child on the scene, girl\n\nAs long as you love me\nI'll be your platinum\nI'll be your silver\nI'll be your gold\nAs long as you love, love me, love me\nAs long as you love, love me, love me"
+            },
+            {
+                title: "I Want It That Way",
+                artist: "Backstreet Boys",
+                src: "public/songs/playlists/valentines/I Want It That Way - Backstreet Boys.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:33",
+                lyrics: "You are my fire\nThe one desire\nBelieve when I say\nI want it that way\n\nBut we are two worlds apart\nCan't reach to your heart\nWhen you say\nThat I want it that way\n\nTell me why\nAin't nothin' but a heartache\nTell me why\nAin't nothin' but a mistake\nTell me why\nI never want to hear you say\nI want it that way\n\nAm I your fire\nYour one desire\nYes, I know it's too late\nBut I want it that way\n\nTell me why\nAin't nothin' but a heartache\nTell me why\nAin't nothin' but a mistake\nTell me why\nI never want to hear you say\nI want it that way"
+            },
+            {
+                title: "Intentions",
+                artist: "Justin Bieber",
+                src: "public/songs/playlists/valentines/Intentions - Justin Bieber.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:32",
+                lyrics: "Picture perfect, you don't need no filter\nGorgeous, make 'em drop dead, you a killer\nShower you with all my attention\nYeah, these are my only intentions\nStay in the kitchen, cookin' up, got your own bread\nHeart full of equity, you're an asset\nMake sure that you don't need no mentions\nYeah, these are my only intentions\n\nShout out to your mom and dad for makin' you\nStandin' ovation, they did a great job raisin' you\nWhen I create, you're my muse\nThat kind of smile that makes the news\nCan't nobody throw shade on your name in these streets\nTriple threat, you're a boss, you're a bae, you're a beast\nYou make it easy to choose\nYou got a mean touch, I can't refuse"
+            },
+            {
+                title: "Love Story",
+                artist: "Taylor Swift",
+                src: "public/songs/playlists/valentines/Love Story - Taylor Swift.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:56",
+                lyrics: "We were both young when I first saw you\nI close my eyes and the flashback starts\nI'm standin' there\nOn a balcony in summer air\n\nSee the lights, see the party, the ball gowns\nSee you make your way through the crowd\nAnd say hello\nLittle did I know\n\nThat you were Romeo, you were throwin' pebbles\nAnd my daddy said, \"Stay away from Juliet\"\nAnd I was cryin' on the staircase\nBeggin' you, \"Please don't go\"\nAnd I said\n\nRomeo, take me somewhere we can be alone\nI'll be waiting, all there's left to do is run\nYou'll be the prince and I'll be the princess\nIt's a love story, baby, just say yes\n\nSo I sneak out to the garden to see you\nWe keep quiet 'cause we're dead if they knew\nSo close your eyes\nEscape this town for a little while\n'Cause you were Romeo, I was a scarlet letter\nAnd my daddy said, \"Stay away from Juliet\"\nBut you were everything to me\nI was beggin' you, \"Please don't go\"\nAnd I said\n\nRomeo, take me somewhere we can be alone\nI'll be waiting, all there's left to do is run\nYou'll be the prince and I'll be the princess\nIt's a love story, baby, just say yes\n\nRomeo, save me, they're tryna tell me how to feel\nThis love is difficult, but it's real\nDon't be afraid, we'll make it out of this mess\nIt's a love story, baby, just say yes\n\nI got tired of waiting\nWonderin' if you were ever comin' around\nMy faith in you was fading\nWhen I met you on the outskirts of town\nAnd I said\n\nRomeo, save me, I've been feelin' so alone\nI keep waitin' for you, but you never come\nIs this in my head? I don't know what to think\nHe knelt to the ground and pulled out a ring\nAnd said\n\nMarry me, Juliet, you'll never have to be alone\nI love you and that's all I really know\nI talked to your dad, go pick out a white dress\nIt's a love story, baby, just say yes\n\nOh, oh, oh, oh\nOh, oh, oh, oh\n'Cause we were both young when I first saw you"
+            },
+            {
+                title: "Lover",
+                artist: "Taylor Swift",
+                src: "public/songs/playlists/valentines/Lover - Taylor Swift.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:41",
+                lyrics: "We could leave the Christmas lights up 'til January\nAnd this is our place, we make the rules\nAnd there's a dazzling haze, a mysterious way about you, dear\nHave I known you twenty seconds or twenty years?\n\nCan I go where you go?\nCan we always be this close forever and ever?\nAnd ah, take me out, and take me home\nYou're my, my, my, my\nLover\n\nWe could let our friends crash in the living room\nThis is our place, we make the call\nAnd I'm highly suspicious that everyone who sees you wants you\nI've loved you three summers now, honey, but I want 'em all\n\nCan I go where you go?\nCan we always be this close forever and ever?\nAnd ah, take me out, and take me home\nYou're my, my, my, my\nLover\n\nLadies and gentlemen, will you please stand?\nWith every guitar string scar on my hand\nI take this magnetic force of a man to be my lover\nMy heart's been borrowed and yours has been blue\nAll's well that ends well to end up with you\nSwear to be overdramatic and true to my lover\nAnd you'll save all your dirtiest jokes for me\nAnd at every table, I'll save you a seat, lover\n\nCan I go where you go?\nCan we always be this close forever and ever?\nAnd ah, take me out, and take me home\nYou're my, my, my, my\nLover\n\nCan I go where you go?\nCan we always be this close forever and ever?\nAnd ah, take me out, and take me home\nYou're my, my, my, my\nLover"
+            },
+            {
+                title: "Ordinary",
+                artist: "Alex Warren",
+                src: "public/songs/playlists/valentines/Alex Warren - Ordinary (Official Video) - Alex Warren.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:20",
+                lyrics: ""
+            },
+            {
+                title: "high, high, high",
+                artist: "Camylio",
+                src: "public/songs/playlists/valentines/Camylio - high, high, high (Official Music Video) - CamylioVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:15",
+                lyrics: ""
+            },
+            {
+                title: "Azizam",
+                artist: "Ed Sheeran",
+                src: "public/songs/playlists/valentines/Ed Sheeran - Azizam (Pink Heart Video) - Ed Sheeran.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:45",
+                lyrics: ""
+            },
+            {
+                title: "Love Me Like You Do",
+                artist: "Ellie Goulding",
+                src: "public/songs/playlists/valentines/Ellie Goulding - Love Me Like You Do (Official Video) - EllieGouldingVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "4:12",
+                lyrics: "You're the light, you're the night\nYou're the color of my blood\nYou're the cure, you're the pain\nYou're the only thing I wanna touch\nNever knew that it could mean so much, so much\n\nYou're the fear, I don't care\n'Cause I've never been so high\nFollow me through the dark\nLet me take you past our satellites\nYou can see the world you brought to life, to life\n\nSo love me like you do, lo-lo-love me like you do\nLove me like you do, lo-lo-love me like you do\nTouch me like you do, to-to-touch me like you do\nWhat are you waiting for?\n\nFading in, fading out\nOn the edge of paradise\nEvery inch of your skin is a holy grail I've got to find\nOnly you can set my heart on fire, on fire\nYeah, I'll let you set the pace\n'Cause I'm not thinking straight\nMy head's spinning around, I can't see clear no more\nWhat are you waiting for?\n\nLove me like you do, lo-lo-love me like you do\nLove me like you do, lo-lo-love me like you do\nTouch me like you do, to-to-touch me like you do\nWhat are you waiting for?\n\nLove me like you do, lo-lo-love me like you do\nLove me like you do, lo-lo-love me like you do\nTouch me like you do, to-to-touch me like you do\nWhat are you waiting for?\n\nI'll let you set the pace\n'Cause I'm not thinking straight\nMy head's spinning around, I can't see clear no more\nWhat are you waiting for?\n\nLove me like you do, lo-lo-love me like you do\nLove me like you do, lo-lo-love me like you do\nTouch me like you do, to-to-touch me like you do\nWhat are you waiting for?"
+            },
+            {
+                title: "Still Falling For You",
+                artist: "Ellie Goulding",
+                src: "public/songs/playlists/valentines/Ellie Goulding - Still Falling For You (From Bridget Jones's Baby Original Soundtrack) - EllieGouldingVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:57",
+                lyrics: ""
+            },
+            {
+                title: "Capital Letters",
+                artist: "Hailee Steinfeld, BloodPop®",
+                src: "public/songs/playlists/valentines/Hailee Steinfeld, BloodPop® - Capital Letters - FiftyShadesVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:39",
+                lyrics: ""
+            },
+            {
+                title: "Unconditionally",
+                artist: "Katy Perry",
+                src: "public/songs/playlists/valentines/Katy Perry - Unconditionally (Official) - KatyPerryVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:48",
+                lyrics: "Oh no, did I get too close?\nOh, did I almost see what's really on the inside?\nAll your insecurities\nAll the dirty laundry\nNever made me blink one time\n\nUnconditional, unconditionally\nI will love you unconditionally\nThere is no fear now\nLet go and just be free\nI will love you unconditionally\n\nSo open up your heart and just let it begin\nOpen up your heart and just let it begin\nOpen up your heart and just let it begin\nOpen up your heart\n\nAcceptance is the key to be\nTo be truly free\nWill you do the same for me?\n\nUnconditional, unconditionally\nI will love you unconditionally\nThere is no fear now\nLet go and just be free\nI will love you unconditionally\n\nSo open up your heart and just let it begin\nOpen up your heart and just let it begin\nOpen up your heart and just let it begin\nOpen up your heart"
+            },
+            {
+                title: "Die With A Smile",
+                artist: "Lady Gaga, Bruno Mars",
+                src: "public/songs/playlists/valentines/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video) - LadyGagaVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:48",
+                lyrics: ""
+            },
+            {
+                title: "Belong Together",
+                artist: "Mark Ambor",
+                src: "public/songs/playlists/valentines/Mark Ambor - Belong Together (Official Visualizer) - Mark Ambor.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:15",
+                lyrics: ""
+            },
+            {
+                title: "I know love",
+                artist: "Tate McRae ft. The Kid LAROI",
+                src: "public/songs/playlists/valentines/Tate McRae - I know love (Official Video) ft. The Kid LAROI - TateMcRaeVEVO.mp3",
+                albumCover: null,
+                period: "romantic",
+                duration: "3:24",
+                lyrics: ""
+            },
+            {
+                title: "blue",
+                artist: "yung kai",
+                src: "public/songs/playlists/valentines/yung kai - blue (official music video) - yung kai.mp3",
+                albumCover: null,
+                period: "chill",
+                duration: "3:30",
+                lyrics: ""
             }
         ];
 
         // Separate songs by tab based on folder paths
         const periodMixSongs = songs.filter(song => song.src.includes('period_mix'));
-        const valentineSongs = songs.filter(song => song.src.includes('valentine') || song.src.includes('/valentine/'));
+        const valentineSongs = songs.filter(song => song.src.includes('valentines') || song.src.includes('/valentines/'));
         const youAndMeSongs = songs.filter(song => 
-            song.src.includes('you-and-me') || 
-            song.src.includes('/you-and-me/') ||
-            (!song.src.includes('period_mix') && !song.src.includes('valentine') && !song.src.includes('/valentine/'))
+            song.src.includes('you-and-me') || song.src.includes('/you-and-me/')
         );
         const allSongs = [...songs]; // Combined array for playback continuity
 
@@ -4065,6 +4462,9 @@
         }
 
         function init() {
+            // Check if Valentine tab should be visible first
+            toggleValentineTab();
+            
             // Load cached covers first
             loadCachedCovers();
             
@@ -4098,9 +4498,9 @@
                 updateVolumeIcon(parseInt(volumeValue));
             }, 100);
 
-            // Restore tab
+            // Restore tab (but only if it's visible)
             const tabElement = document.querySelector(`.main-tab[data-tab="${currentTab}"]`);
-            if (tabElement) {
+            if (tabElement && tabElement.style.display !== 'none') {
                 document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
                 tabElement.classList.add('active');
                 
@@ -4121,6 +4521,15 @@
                     renderYouAndMePlaylist();
                 }
             } else {
+                // If saved tab is hidden or doesn't exist, default to You and Me
+                if (currentTab === 'valentine' && !isValentineDay()) {
+                    currentTab = 'you-and-me';
+                    const youAndMeTab = document.querySelector('.main-tab[data-tab="you-and-me"]');
+                    if (youAndMeTab) {
+                        document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+                        youAndMeTab.classList.add('active');
+                    }
+                }
                 renderYouAndMePlaylist();
             }
 
@@ -4758,9 +5167,14 @@
             setupProgressBarDrag('progressContainer');
             setupProgressBarDrag('fullscreenProgressContainer');
 
-            // Main tabs (Period Mix / You and Me)
+            // Main tabs (Period Mix / You and Me / Valentine)
             document.querySelectorAll('.main-tab').forEach(tab => {
                 tab.addEventListener('click', () => {
+                    // Don't allow clicking on hidden Valentine tab
+                    if (tab.dataset.tab === 'valentine' && !isValentineDay()) {
+                        return;
+                    }
+                    
                     document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                     const tabType = tab.dataset.tab;

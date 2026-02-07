@@ -955,6 +955,55 @@
             transform: translateY(0);
         }
 
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .music-control:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+        }
+
+        .music-control:active {
+            transform: translateY(0);
+        }
+
+        .music-icon {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .music-label {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
+        .music-control.playing .music-icon::before {
+            content: '🔊';
+        }
+
+        .music-control:not(.playing) .music-icon::before {
+            content: '🔇';
+        }
+
         @media (max-width: 768px) {
             .back-button {
                 top: 15px;
@@ -962,6 +1011,16 @@
                 padding: 10px 20px;
                 font-size: 0.9rem;
                 z-index: 2001;
+            }
+
+            .music-control {
+                top: 15px;
+                right: 15px;
+                padding: 10px 20px;
+            }
+
+            .music-label {
+                font-size: 0.85rem;
             }
         }
 
@@ -972,12 +1031,30 @@
                 padding: 8px 16px;
                 font-size: 0.85rem;
             }
+
+            .music-control {
+                top: 12px;
+                right: 12px;
+                padding: 8px 16px;
+            }
+
+            .music-label {
+                display: none;
+            }
         }
     </style>
 </head>
 
 <body>
     <a href="index.html" class="back-button">← Back</a>
+    
+    <div class="music-control" id="musicControl">
+        <span class="music-icon"></span>
+        <span class="music-label">Music</span>
+    </div>
+
+    <audio id="backgroundMusic"></audio>
+
     <div class="hearts" id="hearts"></div>
     
     <!-- Rose Bouquets -->
@@ -1373,6 +1450,108 @@
                 createSparkle(e.clientX - rect.left, e.clientY - rect.top);
             }
         });
+
+        // Valentine songs playlist
+        const valentineSongs = [
+            'public/songs/playlists/valentines/Adore You - Harry Styles.mp3',
+            'public/songs/playlists/valentines/Alex Warren - Ordinary (Official Video) - Alex Warren.mp3',
+            'public/songs/playlists/valentines/As Long As You Love Me - Justin Bieber.mp3',
+            'public/songs/playlists/valentines/Camylio - high, high, high (Official Music Video) - CamylioVEVO.mp3',
+            'public/songs/playlists/valentines/Chris Brown - Under The Influence (Audio) - ChrisBrownVEVO.mp3',
+            'public/songs/playlists/valentines/Ed Sheeran - Azizam (Pink Heart Video) - Ed Sheeran.mp3',
+            'public/songs/playlists/valentines/Ed Sheeran - Perfect - LatinHype.mp3',
+            'public/songs/playlists/valentines/Ellie Goulding - Love Me Like You Do (Official Video) - EllieGouldingVEVO.mp3',
+            'public/songs/playlists/valentines/Ellie Goulding - Still Falling For You (From Bridget Jones\'s Baby Original Soundtrack) - EllieGouldingVEVO.mp3',
+            'public/songs/playlists/valentines/Gesaffelstein & The Weeknd - Lost in the Fire (Official Video) - GesaffelsteinVEVO.mp3',
+            'public/songs/playlists/valentines/Hailee Steinfeld, BloodPop® - Capital Letters - FiftyShadesVEVO.mp3',
+            'public/songs/playlists/valentines/I Want It That Way - Backstreet Boys.mp3',
+            'public/songs/playlists/valentines/Intentions - Justin Bieber.mp3',
+            'public/songs/playlists/valentines/Kane Brown - Heaven (Official Video) - KaneBrownVEVO.mp3',
+            'public/songs/playlists/valentines/Kane Brown, Katelyn Brown - Thank God (Official Music Video) - KaneBrownVEVO.mp3',
+            'public/songs/playlists/valentines/Katy Perry - Unconditionally (Official) - KatyPerryVEVO.mp3',
+            'public/songs/playlists/valentines/Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video) - LadyGagaVEVO.mp3',
+            'public/songs/playlists/valentines/Love Story - Taylor Swift.mp3',
+            'public/songs/playlists/valentines/Lover - Taylor Swift.mp3',
+            'public/songs/playlists/valentines/Mark Ambor - Belong Together (Official Visualizer) - Mark Ambor.mp3',
+            'public/songs/playlists/valentines/Tate McRae - I know love (Official Video) ft. The Kid LAROI - TateMcRaeVEVO.mp3',
+            'public/songs/playlists/valentines/The Weeknd - Out of Time - TheWeekndVEVO.mp3',
+            'public/songs/playlists/valentines/The Weeknd, Ariana Grande - Die For You (Remix _ Lyric Video) - TheWeekndVEVO.mp3',
+            'public/songs/playlists/valentines/Yellow - Lofi Fruits Music, Avocuddle , Fets.mp3',
+            'public/songs/playlists/valentines/yung kai - blue (official music video) - yung kai.mp3'
+        ];
+
+        // Shuffle array function
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Music control
+        const musicControl = document.getElementById('musicControl');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        let isPlaying = false;
+        let currentPlaylist = shuffleArray(valentineSongs);
+        let currentSongIndex = 0;
+
+        // Set volume to soft (30%)
+        backgroundMusic.volume = 0.3;
+
+        // Load and play a song
+        function loadAndPlaySong() {
+            if (currentSongIndex >= currentPlaylist.length) {
+                // Shuffle again when playlist ends
+                currentPlaylist = shuffleArray(valentineSongs);
+                currentSongIndex = 0;
+            }
+            
+            backgroundMusic.src = currentPlaylist[currentSongIndex];
+            backgroundMusic.load();
+            
+            if (isPlaying) {
+                backgroundMusic.play().catch(error => {
+                    console.log('Autoplay prevented:', error);
+                });
+            }
+        }
+
+        // When a song ends, play the next one
+        backgroundMusic.addEventListener('ended', () => {
+            currentSongIndex++;
+            loadAndPlaySong();
+        });
+
+        // Handle play/pause
+        function toggleMusic() {
+            if (isPlaying) {
+                backgroundMusic.pause();
+                musicControl.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                // Play the current song
+                backgroundMusic.play().catch(error => {
+                    console.log('Play error:', error);
+                    // If play fails, try loading a new song
+                    loadAndPlaySong();
+                });
+                musicControl.classList.add('playing');
+                isPlaying = true;
+            }
+        }
+
+        musicControl.addEventListener('click', toggleMusic);
+
+        // Touch support for music control
+        musicControl.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            toggleMusic();
+        });
+
+        // Initialize with first song (but don't autoplay)
+        loadAndPlaySong();
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
