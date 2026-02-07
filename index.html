@@ -172,8 +172,10 @@
         @media (max-width: 768px) {
             .logout-btn {
                 position: static;
-                display: inline-block;
-                margin-top: 20px;
+                display: block;
+                width: 100%;
+                margin: 40px auto 20px;
+                text-align: center;
             }
         }
 
@@ -900,7 +902,6 @@
 
     <div class="container">
         <div class="header">
-            <button class="logout-btn" id="logoutBtn" title="Logout">Logout</button>
             <h1>For the Love of My Life, Maryam</h1>
             <p class="subtitle">Every moment with you is a gift I treasure</p>
         </div>
@@ -1000,6 +1001,7 @@
                 </a>
             </div>
         </div>
+        <button class="logout-btn" id="logoutBtn" title="Logout">Logout</button>
     </div>
 
     <script>
