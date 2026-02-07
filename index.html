@@ -564,6 +564,14 @@
             gap: 35px;
         }
 
+        /* Valentine & Movie cards: hidden until Feb 14 midnight */
+        .link-card.valentine-day-only {
+            display: none !important;
+        }
+        body.valentine-day .link-card.valentine-day-only {
+            display: block !important;
+        }
+
         @keyframes cardGlow {
             0%, 100% {
                 box-shadow: 0 25px 70px rgba(196, 69, 105, 0.4),
@@ -958,7 +966,7 @@
                     <div class="link-title">✨ Constellation of Love</div>
                     <div class="link-description">Our eternal love written across the starry sky</div>
                 </a>
-                <a href="valentine.html" class="link-card">
+                <a href="valentine.html" class="link-card valentine-day-only">
                     <div class="card-heart">🌹</div>
                     <div class="card-heart">💐</div>
                     <div class="card-heart">🌷</div>
@@ -971,8 +979,8 @@
                     <div class="card-heart">✉️</div>
                     <div class="card-heart">💝</div>
                     <div class="card-heart">💕</div>
-                    <div class="link-title">💌 Digital Love Letter</div>
-                    <div class="link-description">Words from my heart, typed just for you</div>
+                    <div class="link-title">💌 My Valentine Love Letter</div>
+                    <div class="link-description">A letter written with love, just for you this Valentine's</div>
                 </a>
                 <a href="player.html" class="link-card">
                     <div class="card-heart">🎵</div>
@@ -982,7 +990,7 @@
                     <div class="link-title">🎵 Our Love Songs</div>
                     <div class="link-description">Melodies that tell the story of us</div>
                 </a>
-                <a href="movie.html" class="link-card">
+                <a href="movie.html" class="link-card valentine-day-only">
                     <div class="card-heart">🎬</div>
                     <div class="card-heart">💖</div>
                     <div class="card-heart">🎭</div>
@@ -995,6 +1003,30 @@
     </div>
 
     <script>
+        // Show Valentine & Movie cards only on Feb 14 (from midnight)
+        function updateValentineDayCards() {
+            const now = new Date();
+            if (now.getMonth() === 1 && now.getDate() === 14) {
+                document.body.classList.add('valentine-day');
+            } else {
+                document.body.classList.remove('valentine-day');
+            }
+        }
+        updateValentineDayCards();
+        // If today is Feb 13, reveal cards at midnight (Feb 14 00:00:00)
+        (function scheduleValentineReveal() {
+            const now = new Date();
+            if (now.getMonth() === 1 && now.getDate() === 13) {
+                const midnight = new Date(now.getFullYear(), 1, 14, 0, 0, 0, 0);
+                const msUntilMidnight = midnight - now;
+                if (msUntilMidnight > 0) {
+                    setTimeout(function() {
+                        document.body.classList.add('valentine-day');
+                    }, msUntilMidnight);
+                }
+            }
+        })();
+
         // Create floating hearts
         function createHeart() {
             const heart = document.createElement('div');

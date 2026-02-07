@@ -3402,20 +3402,15 @@
     <audio id="audioPlayer"></audio>
 
     <script>
-        // Check if today is February 14th at 12:01 AM or later
+        // Check if today is February 14th at midnight (00:00) or later
         function isValentineDay() {
             const now = new Date();
             const month = now.getMonth() + 1; // getMonth() returns 0-11
             const date = now.getDate();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
             
-            // February 14th, and time is 12:01 AM (00:01) or later
+            // February 14th from midnight onward
             if (month === 2 && date === 14) {
-                // If it's February 14th, check if it's past 12:01 AM
-                if (hours > 0 || (hours === 0 && minutes >= 1)) {
-                    return true;
-                }
+                return true;
             }
             
             // Also allow if it's past February 14th
@@ -3439,7 +3434,7 @@
                     valentineTab.style.display = '';
                 } else {
                     valentineTab.style.display = 'none';
-                    // If Valentine tab is active but it's not Feb 14 12:01 AM or later, switch to You and Me
+                    // If Valentine tab is active but it's not Feb 14 midnight or later, switch to You and Me
                     if (valentineTab.classList.contains('active')) {
                         valentineTab.classList.remove('active');
                         const youAndMeTab = document.querySelector('.main-tab[data-tab="you-and-me"]');
