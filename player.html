@@ -2737,6 +2737,10 @@
                 font-size: 13px;
                 white-space: nowrap;
                 flex-shrink: 0;
+                min-width: 110px;
+                width: 110px;
+                box-sizing: border-box;
+                text-align: center;
                 position: relative;
                 overflow: hidden;
                 -webkit-tap-highlight-color: transparent;
@@ -3096,6 +3100,12 @@
             .main-tab {
                 padding: 6px 12px;
                 font-size: 12px;
+                white-space: nowrap;
+                flex-shrink: 0;
+                min-width: 110px;
+                width: 110px;
+                box-sizing: border-box;
+                text-align: center;
             }
 
             .main-tab:active {
@@ -3231,7 +3241,7 @@
             <div class="now-playing-section">
                 <div class="album-art-large" id="albumArt">
                     <i class="fas fa-music"></i>
-                    <img id="albumImage" src="" alt="Album Art" style="display: none;">
+                    <img id="albumImage" src="" alt="Album Art" referrerpolicy="no-referrer" style="display: none;">
                 </div>
                 <div class="song-details">
                     <div class="song-type">Playlist</div>
@@ -3284,7 +3294,7 @@
                 <div class="now-playing-info">
                     <div class="now-playing-art" id="miniAlbumArt">
                         <i class="fas fa-music"></i>
-                        <img id="miniAlbumImage" src="" alt="" style="display: none;">
+                        <img id="miniAlbumImage" src="" alt="" referrerpolicy="no-referrer" style="display: none;">
                     </div>
                     <div class="now-playing-text">
                         <div class="now-playing-title" id="miniTitle">You and Me</div>
@@ -3319,7 +3329,7 @@
             <div class="fullscreen-left">
                 <div class="fullscreen-album-art" id="fullscreenAlbumArt">
                     <i class="fas fa-music"></i>
-                    <img id="fullscreenAlbumImage" src="" alt="" style="display: none;">
+                    <img id="fullscreenAlbumImage" src="" alt="" referrerpolicy="no-referrer" style="display: none;">
                 </div>
                 <div class="fullscreen-song-info">
                     <div class="fullscreen-song-title" id="fullscreenTitle">Select a song</div>
@@ -3371,7 +3381,7 @@
             <div class="song-info-mini">
                 <div id="lyricsViewAlbumArt" style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; overflow: hidden;">
                     <i class="fas fa-music" style="font-size: 18px; color: rgba(255, 255, 255, 0.5);"></i>
-                    <img id="lyricsViewAlbumImage" src="" alt="" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 6px; position: absolute; top: 0; left: 0;">
+                    <img id="lyricsViewAlbumImage" src="" alt="" referrerpolicy="no-referrer" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 6px; position: absolute; top: 0; left: 0;">
                 </div>
                 <div class="song-info-mini-text">
                     <div class="song-info-mini-title" id="lyricsViewTitle">Select a song</div>
@@ -4143,6 +4153,12 @@
             }
         }
 
+        // Ensure HTTPS for album art URLs (avoids mixed content block on mobile after deployment)
+        function normalizeAlbumCoverUrl(url) {
+            if (!url || typeof url !== 'string') return url;
+            return url.replace(/^http:\/\//i, 'https://');
+        }
+
         // Cache key generator
         function getCacheKey(title, artist) {
             return `albumCover_${title}_${artist}`.replace(/[^a-zA-Z0-9_]/g, '_');
@@ -4152,7 +4168,7 @@
         function getCachedAlbumCover(title, artist) {
             const cacheKey = getCacheKey(title, artist);
             const cached = localStorage.getItem(cacheKey);
-            return cached || null;
+            return cached ? normalizeAlbumCoverUrl(cached) : null;
         }
 
         // Save album cover to cache
@@ -4193,6 +4209,8 @@
                     if (cached) {
                         song.albumCover = cached;
                     }
+                } else {
+                    song.albumCover = normalizeAlbumCoverUrl(song.albumCover);
                 }
             });
         }
@@ -4213,9 +4231,9 @@
                     // Get the largest available artwork (600x600 or 1000x1000)
                     const artworkUrl = data.results[0].artworkUrl100 || data.results[0].artworkUrl60;
                     if (artworkUrl) {
-                        // Replace 100x100 with 600x600 for better quality
-                        const coverUrl = artworkUrl.replace('100x100', '600x600').replace('60x60', '600x600');
-                        // Cache it
+                        // Replace 100x100 with 600x600 for better quality, force HTTPS for mobile/deployment
+                        let coverUrl = artworkUrl.replace('100x100', '600x600').replace('60x60', '600x600');
+                        coverUrl = normalizeAlbumCoverUrl(coverUrl);
                         cacheAlbumCover(title, artist, coverUrl);
                         return coverUrl;
                     }
@@ -4389,6 +4407,7 @@
                     
                     if (i < songsWithCovers.length && songsWithCovers[i].albumCover) {
                         const img = document.createElement('img');
+                        img.referrerPolicy = 'no-referrer';
                         img.src = songsWithCovers[i].albumCover;
                         img.alt = songsWithCovers[i].title;
                         img.className = 'collage-img';
@@ -4454,6 +4473,7 @@
             
             // Update mini album art only
             if (song.albumCover) {
+                miniAlbumImage.referrerPolicy = 'no-referrer';
                 miniAlbumImage.src = song.albumCover;
                 miniAlbumImage.alt = song.title;
                 miniAlbumImage.style.display = 'block';
@@ -4642,7 +4662,7 @@
                     </div>
                     <div class="playlist-item-art">
                         <i class="fas fa-music"></i>
-                        ${song.albumCover ? `<img src="${song.albumCover}" alt="${song.title}" onerror="this.style.display='none'; this.parentElement.querySelector('i').style.display='flex';" onload="this.style.display='block'; this.parentElement.querySelector('i').style.display='none'; this.parentElement.classList.add('has-image');">` : ''}
+                        ${song.albumCover ? `<img src="${song.albumCover}" alt="${song.title}" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.querySelector('i').style.display='flex';" onload="this.style.display='block'; this.parentElement.querySelector('i').style.display='none'; this.parentElement.classList.add('has-image');">` : ''}
                     </div>
                     <div class="playlist-item-info">
                         <div class="playlist-item-title">${song.title}</div>
@@ -4699,7 +4719,7 @@
                     </div>
                     <div class="playlist-item-art">
                         <i class="fas fa-music"></i>
-                        ${song.albumCover ? `<img src="${song.albumCover}" alt="${song.title}" onerror="this.style.display='none'; this.parentElement.querySelector('i').style.display='flex';" onload="this.style.display='block'; this.parentElement.querySelector('i').style.display='none'; this.parentElement.classList.add('has-image');">` : ''}
+                        ${song.albumCover ? `<img src="${song.albumCover}" alt="${song.title}" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.querySelector('i').style.display='flex';" onload="this.style.display='block'; this.parentElement.querySelector('i').style.display='none'; this.parentElement.classList.add('has-image');">` : ''}
                     </div>
                     <div class="playlist-item-info">
                         <div class="playlist-item-title">${song.title}</div>
@@ -4765,7 +4785,7 @@
                     </div>
                     <div class="playlist-item-art">
                         <i class="fas fa-music"></i>
-                        ${song.albumCover ? `<img src="${song.albumCover}" alt="${song.title}" onerror="this.style.display='none'; this.parentElement.querySelector('i').style.display='flex';" onload="this.style.display='block'; this.parentElement.querySelector('i').style.display='none'; this.parentElement.classList.add('has-image');">` : ''}
+                        ${song.albumCover ? `<img src="${song.albumCover}" alt="${song.title}" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.querySelector('i').style.display='flex';" onload="this.style.display='block'; this.parentElement.querySelector('i').style.display='none'; this.parentElement.classList.add('has-image');">` : ''}
                     </div>
                     <div class="playlist-item-info">
                         <div class="playlist-item-title">${song.title}</div>
@@ -4818,6 +4838,7 @@
                 const fullscreenAlbumArt = document.getElementById('fullscreenAlbumArt');
                 const fullscreenAlbumImage = document.getElementById('fullscreenAlbumImage');
                 if (song.albumCover) {
+                    fullscreenAlbumImage.referrerPolicy = 'no-referrer';
                     fullscreenAlbumImage.src = song.albumCover;
                     fullscreenAlbumImage.style.display = 'block';
                     fullscreenAlbumArt.classList.add('has-image');
@@ -4835,6 +4856,7 @@
                 if (song.albumCover) {
                     // Preload image for smooth transition
                     const img = new Image();
+                    img.referrerPolicy = 'no-referrer';
                     img.onload = () => {
                         fullscreenPlayer.style.setProperty('--bg-image', `url(${song.albumCover})`);
                     };
@@ -4914,6 +4936,7 @@
                 const lyricsViewAlbumImage = document.getElementById('lyricsViewAlbumImage');
                 const icon = lyricsViewAlbumArt.querySelector('i');
                 if (song.albumCover) {
+                    lyricsViewAlbumImage.referrerPolicy = 'no-referrer';
                     lyricsViewAlbumImage.src = song.albumCover;
                     lyricsViewAlbumImage.style.display = 'block';
                     lyricsViewAlbumArt.style.position = 'relative';
